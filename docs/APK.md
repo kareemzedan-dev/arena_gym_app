@@ -1,15 +1,19 @@
 # Android preview APK
 
-## Verified build · 4 November 2026
+## Verified build · 5 November 2026 (Egypt)
 
-[Download APK artifact (ZIP)](https://github.com/Wingital-Company/arena-gym-expo/actions/runs/41906468710/artifacts/13362442901) · [Successful build](https://github.com/Wingital-Company/arena-gym-expo/actions/runs/41906468710)
+[Download APK artifact (ZIP)](https://github.com/Wingital-Company/arena-gym-expo/actions/runs/41918710299/artifacts/13367946959) · [Successful build](https://github.com/Wingital-Company/arena-gym-expo/actions/runs/41918710299)
 
-- Source commit: `585fdfb2c0c8652f0980517ae0e807e470f522dd`.
-- Version: 4.0.0 (29); Android 7.0/API 24 or newer.
-- APK size: 53,902,771 bytes (51.4 MiB); download ZIP approximately 22.5 MiB.
-- SHA-256: `36c8146c356d87fa791c698b9cb5f9309347d8448af1ae351c4ac9df5bebda95`.
-- Verification: APK v2 signature valid; preview package/name correct; both ARM architectures included; embedded JavaScript contains the staging backend URL; downloaded file matches the build checksum.
-- Native compile completed successfully in 31m 29s. Physical-device launch/acceptance remains to be reviewed.
+- Source commit: `7d9b758e231681d01c0ef9130975196ae1206018`.
+- Version: 4.0.1 (30); Android 7.0/API 24 or newer.
+- APK size: 52,194,147 bytes (49.8 MiB); download ZIP approximately 20.9 MiB.
+- SHA-256: `3862c7b37a6d874729d81635a6e56aa0587397df76fe2e405a4d09bb2a08a267`.
+- Verification: APK v2 signature valid; preview package/name correct; both ARM architectures included; embedded JavaScript contains the staging backend URL; downloaded file matches the build checksum. The bundled app contains the new icon-introduction preference key and no reference to the removed training photograph.
+- Native compile completed successfully in 24m 17s. Physical-device launch/acceptance remains to be reviewed.
+
+## Changes in 4.0.1
+
+Large vector fitness icons replace all in-app photographs for the women’s gym. The larger introduction animates once with gentle motion and respects reduced-motion preferences. Password visibility controls sit inside their fields with correct Arabic/English placement. Existing users see the revised introduction once.
 
 ## Install
 

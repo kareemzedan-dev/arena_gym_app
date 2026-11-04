@@ -24,7 +24,7 @@ Screenshots use synthetic local review accounts/data. They are actual running Re
 - 23 unit/contract tests pass, including 115 captured backend protocol cases: rotating-token concurrency, late unauthorized responses, logout races, failed refresh, rejected replacement tokens, no retry of forbidden writes, password-byte preservation, browser fetch binding, bounded responses, calendar dates, OMR decimals, role boundaries, plan scopes, measurements, nested training payloads and audited invoice corrections.
 - Expo Doctor: 20/20 checks passed.
 - Android and iOS Hermes bundle export and web bundle export pass.
-- Android preview native compilation and APK signature verification pass; [download and evidence](APK.md).
+- Android preview 4.0.1 (30) native compilation, signature and downloaded checksum verification pass; [download and evidence](APK.md).
 - Android/iOS native project generation passes (`expo prebuild --no-install`); this is not a signed native compilation.
 - Mobile dependency audit: **0 vulnerabilities** after Zod 4.6.7 and scoped Expo-tooling overrides for glob 14.0.2/minimatch 11.0.1. CI now checks the audit as well.
 - 7 browser integration journeys pass against a real, isolated NestJS API and temporary MariaDB, with no page errors. The current suite includes password-control geometry in Arabic/English and animation stability with normal/reduced motion.
