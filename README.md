@@ -33,6 +33,12 @@ npm run ios
 
 The existing app identity is retained: `com.arenagym.app`, EAS project `b6642ad0-4188-4fe2-99e2-ca2b877f3d97`. Version 4 uses a separate runtime and does not publish an update to the old application. Production builds require an explicit HTTPS `EXPO_PUBLIC_API_URL` in the EAS production environment.
 
+## Android APK preview
+
+The `Android preview APK` GitHub Actions workflow compiles a standalone APK from this branch without an EAS login. A successful run uploads `arena-gym-preview-<commit>` containing the APK, package metadata and SHA-256 checksum. See [APK installation and build details](docs/APK.md).
+
+The preview is named **Arena Gym Preview**, uses `com.arenagym.app.preview` and connects to the staging API. It installs alongside the existing production app. It embeds JavaScript/assets, so Expo Go and Metro are not required. The release variant uses the template development signing key solely for this separate preview identity; production signing remains separate.
+
 ## Features
 
 | PDF requirement | Mobile implementation |
@@ -99,6 +105,6 @@ Open `http://127.0.0.1:8082`. Disposable accounts: `review-member`, `review-coac
 
 Android and iOS native projects also pass `expo prebuild --no-install`; this validates configuration/plugins, not compilation. `expo-system-ui` enables the native dark appearance. Generated native directories are excluded from Git and EAS uploads so EAS uses the reviewed managed configuration.
 
-Native signing/builds need access to the existing EAS owner/project and Apple/Google credentials. This workspace is not logged into EAS and has no Android emulator or Xcode, so a signed APK/IPA, physical-device acceptance and store publication have **not** been performed. Complete the device checklist in `docs/REVIEW.md` before release.
+Native signing/builds need access to the existing EAS owner/project and Apple/Google credentials. This workspace is not logged into EAS and has no Android emulator or Xcode, so production signing, an IPA, physical-device acceptance and store publication have **not** been performed. A standalone Android preview APK signed with the development key has now been built and verified through GitHub Actions; download it from [docs/APK.md](docs/APK.md). Complete the device checklist in `docs/REVIEW.md` before release.
 
 Automatic WhatsApp/email/SMS delivery and payment-gateway charging remain inactive as specified by the existing backend handoff. Manual sharing opens a user-controlled destination; recording a payment is not a bank charge or refund.

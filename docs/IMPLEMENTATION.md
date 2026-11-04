@@ -35,4 +35,4 @@ Automatic WhatsApp/email/SMS sending remains inactive per the backend handoff. I
 
 ## Acceptance evidence
 
-Source implementation and environment-available checks are complete. See [REVIEW.md](REVIEW.md) for test evidence, screenshots and explicitly uncompleted native signing/device/provider release gates. Code completion does not mark those external release gates complete.
+Source implementation and environment-available checks are complete. See [REVIEW.md](REVIEW.md) for test evidence, screenshots and the completed Android preview APK and explicitly uncompleted production signing/iOS/device/provider release gates. Code completion does not mark those external release gates complete.

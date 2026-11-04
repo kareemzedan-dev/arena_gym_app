@@ -22,6 +22,7 @@ Screenshots use synthetic local review accounts/data. They are actual running Re
 - 23 unit/contract tests pass, including 115 captured backend protocol cases: rotating-token concurrency, late unauthorized responses, logout races, failed refresh, rejected replacement tokens, no retry of forbidden writes, password-byte preservation, browser fetch binding, bounded responses, calendar dates, OMR decimals, role boundaries, plan scopes, measurements, nested training payloads and audited invoice corrections.
 - Expo Doctor: 20/20 checks passed.
 - Android and iOS Hermes bundle export and web bundle export pass.
+- Android preview native compilation and APK signature verification pass; [download and evidence](APK.md).
 - Android/iOS native project generation passes (`expo prebuild --no-install`); this is not a signed native compilation.
 - Mobile dependency audit: **0 vulnerabilities** after Zod 4.6.7 and scoped Expo-tooling overrides for glob 14.0.2/minimatch 11.0.1. CI now checks the audit as well.
 - 4 browser integration journeys pass against a real, isolated NestJS API and temporary MariaDB, with no page errors. Latest completed run after dependency migration: 23.1 seconds.
@@ -53,7 +54,7 @@ Expo 58 still declares older glob/minimatch versions. Scoped overrides select fi
 
 ## Remaining release gates — not claimed complete
 
-- **Signed native packages:** `eas whoami` reports “Not logged in”. Android SDK/emulator and Xcode are not installed in this environment. No signed APK, IPA or store upload exists from this work. An authorized EAS account with access to the retained project is needed for preview builds.
+- **Production signing and iOS:** the standalone Android preview APK is now built and signature-verified; see [APK download/evidence](APK.md). It uses the isolated preview application ID and development signing key. EAS is not authenticated here, so production signing, IPA generation and store submission remain incomplete.
 - **Device acceptance:** test Android and iPhone safe areas, keyboard avoidance, system back/gestures, screen-reader navigation, large text, SecureStore persistence, app background/resume, offline retry, low-end-device animation performance, haptics and external video/PDF links. Test a real expired/rotated session on both OSes.
 - **Production target:** set `EXPO_PUBLIC_API_URL` in EAS's production environment. The build config rejects a production build without an explicit HTTPS API URL. Browser origins need explicit backend CORS configuration; native apps use direct bearer requests.
 - **Member invoice detail/PDF:** the current backend permits these endpoints only for finance roles. Members see their permitted invoice summaries. Adding member PDF access requires an ownership-checked backend endpoint.
@@ -64,4 +65,4 @@ Expo 58 still declares older glob/minimatch versions. Scoped overrides select fi
 1. Inspect the intro, Arabic home and progress screenshots for visual direction.
 2. Run the temporary local review environment from the README and sign in as each role.
 3. Review the plan, role matrix, financial confirmation behavior and API client tests.
-4. Build a signed preview through the existing EAS account and complete device acceptance before merging/releasing.
+4. Install the verified Android preview APK and complete device acceptance. Use the authorized EAS account for iOS/production signing before releasing.
