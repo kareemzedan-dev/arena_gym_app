@@ -1,5 +1,5 @@
+// Generated from the backend by npm run sync:contracts; see docs/contracts-source.json.
 import { z } from "zod";
-
 import { Role } from "./common";
 export * from "./common";
 export * from "./branches";
@@ -9,28 +9,24 @@ export * from "./plan-categories";
 export * from "./plans";
 export * from "./products";
 export * from "./files";
-
 export const LoginRequest = z
-  .object({
+    .object({
     identifier: z.string().trim().min(1).max(191),
     // Preserve password bytes, including leading/trailing whitespace.
     password: z.string().min(1).max(4096),
-  })
-  .strict();
+})
+    .strict();
 export type LoginRequest = z.infer<typeof LoginRequest>;
-
 export const RefreshRequest = z
-  .object({ refreshToken: z.string().min(1).max(2048) })
-  .strict();
+    .object({ refreshToken: z.string().min(1).max(2048) })
+    .strict();
 export type RefreshRequest = z.infer<typeof RefreshRequest>;
-
 export const TokenPair = z
-  .object({ accessToken: z.string(), refreshToken: z.string() })
-  .strict();
+    .object({ accessToken: z.string(), refreshToken: z.string() })
+    .strict();
 export type TokenPair = z.infer<typeof TokenPair>;
-
 export const Me = z
-  .object({
+    .object({
     id: z.number().int().positive(),
     username: z.string(),
     mobile: z.string().nullable(),
@@ -39,10 +35,9 @@ export const Me = z
     isActive: z.boolean(),
     branchId: z.number().int().positive().nullable(),
     lastLoginAt: z.string().datetime().nullable(),
-  })
-  .strict();
+})
+    .strict();
 export type Me = z.infer<typeof Me>;
-
 export * from "./health";
 export * from "./pos";
 export * from "./invoices";
@@ -52,14 +47,12 @@ export * from "./attendance";
 export * from "./training";
 export * from "./reports";
 export * from "./self-service";
-
 export const ChangePasswordRequest = z
-  .object({
+    .object({
     currentPassword: z.string().min(1).max(4096),
     newPassword: z.string().min(8).max(128),
-  })
-  .strict();
+})
+    .strict();
 export type ChangePasswordRequest = z.infer<typeof ChangePasswordRequest>;
-
 export * from "./sales-math";
 export * from "./operations";

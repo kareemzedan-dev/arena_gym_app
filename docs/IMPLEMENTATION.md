@@ -20,13 +20,13 @@ References reviewed 2026-11-04:
 
 - [x] 01 Discovery: read PDF, repository architecture, API handoff, old mobile routes, auth, assets and translations; identify old WordPress API incompatibility.
 - [x] 02 Design direction: preserve original Arena identity; produce an original training photograph; define tokens, navigation and typography.
-- [x] 03 Foundation: Expo SDK 58, TypeScript, Router, reproducible lockfile, isolated local contract package, EAS development/preview/release profiles.
+- [x] 03 Foundation: Expo SDK 58, TypeScript, Router, reproducible lockfile, isolated local contract package with a reproducible Zod 4 compatibility adapter, EAS development/preview/release profiles.
 - [x] 04 Authentication: atomic secure token-pair storage, single-flight refresh rotation, logout race protection, validation, account-role routing, password change, network errors.
 - [x] 05 Member experience: onboarding; dashboard; membership/session balances; workouts/videos; meals; coach; all measurement fields/history/differences; invoices; attendance; class browsing/booking; notices/messages.
 - [x] 06 Coach experience: scoped client search/detail, workouts/exercises and assignments, meal-plan creation, measurements, schedule, attendance.
 - [x] 07 Administration: members/coaches/categories/plans/classes creation and edits; plan-specific fields; POS quote and checkout; cash/card partial payment; invoices/payment collection/corrections; reports and branch/date filters.
 - [x] 08 Quality: request contract validation; no secrets/credentials in builds; session isolation; dates in Muscat, exact OMR strings; pagination; Arabic/English and text direction; loading/empty/error states.
-- [x] 09 Verify: typecheck; auth concurrency/unit/contract tests; Expo dependency doctor; Android/iOS/web export; browser walkthrough at mobile widths and screenshots; direct API connectivity.
+- [x] 09 Verify: typecheck; auth concurrency/unit/contract tests; 115 backend protocol cases; dependency audit; native project generation; Expo dependency doctor; Android/iOS/web export; browser walkthrough at mobile widths and screenshots; direct API connectivity.
 - [x] 10 Handoff: documented run/build commands, feature matrix and evidence, review screenshots, explicit native-device/store release gates.
 
 ## Release boundaries

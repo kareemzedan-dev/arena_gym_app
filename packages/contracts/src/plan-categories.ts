@@ -1,8 +1,10 @@
+// Generated from the backend by npm run sync:contracts; see docs/contracts-source.json.
+import { partialWithoutDefaults } from "../compat";
 import { z } from 'zod';
 import { id, name, pageResponse, PaginationQuery, queryBoolean, timestamp } from './common';
-export const PlanCategoryRequest = z.object({ name, isActive: z.boolean().default(true) }).strict();
+export const PlanCategoryRequest = z.object({ name, isActive: z.boolean().prefault(true) }).strict();
 export type PlanCategoryRequest = z.infer<typeof PlanCategoryRequest>;
-export const PlanCategoryUpdateRequest = PlanCategoryRequest.partial().strict();
+export const PlanCategoryUpdateRequest = partialWithoutDefaults(PlanCategoryRequest).strict();
 export type PlanCategoryUpdateRequest = z.infer<typeof PlanCategoryUpdateRequest>;
 export const PlanCategoryListQuery = PaginationQuery.extend({ isActive: queryBoolean.optional() }).strict();
 export type PlanCategoryListQuery = z.infer<typeof PlanCategoryListQuery>;

@@ -1,6 +1,28 @@
 {
   "repository": "Wingital-Company/arena-gym",
-  "commit": "1e43616b5cc13661a69787256260bf68490c6dc5",
+  "commit": "d441b35c3e3e34e5fdc029c3a3853e5565b154b3",
   "path": "packages/shared/src",
-  "syncedOn": "2026-11-04"
+  "adapter": "Zod 4: preserve partial omission, pre-parse defaults, explicit string record keys, inline refinements",
+  "sourceSha256": {
+    "attendance.ts": "8ef4932d1dc295c29423490d865330919be5524b6d26978401125fe05972ff01",
+    "branches.ts": "9b6befa55afc998054c66e07d13b559fd0b619c4a97456e43731e700def4138a",
+    "common.ts": "a64e94c6c7ce0dd4aada25174437ffb0835d7ccfbfc3307b6a6c50352e530077",
+    "files.ts": "fb455f4b34b5551b32ddc83efec2cdec99d36a850ffa6736a381b65e707235ff",
+    "health.ts": "d976c67b79b46e6c571c5170910bbb7bb37d1f41000d332cf41106e6d5a2dc82",
+    "index.ts": "da2c3f71991685b76db24ff0a9255f1f0525b0b5dcccee12e65969848a7d4dd2",
+    "invoices.ts": "e47ec95928921f933ee239c2c2decd2f852c1ec4959f9dbf98aa4580e6abfa9e",
+    "members.ts": "19de8118d6f7c0de6c734b627df625b8b48429bfc2d2f494c6c9668be7d87bb7",
+    "operations.ts": "d974c6f6cfbf55fc9e61a70401212f128ac2e5761ebed1ad06509554e4bac8dc",
+    "payments.ts": "4f77bff55feb5d71f91bdbabed6c70dfba2ddc6cc4b9126bef3c9b2e4f7f7be2",
+    "plan-categories.ts": "c28ec29a1d006b6c97f549abc6073e4d1091c4e20d022c4496381851f0be99f5",
+    "plans.ts": "4fd09dfe82a14841e9d6f62029ac22d9a34d7a43d6b4aa49dce8998b0430c76c",
+    "pos.ts": "0af39984065fdd1e062924397119baf7d9795b3d108b24f797dfcb98f6321065",
+    "products.ts": "760ca6701ec888bbf827063ca86304d3efa6aad55f4507b748176481513d23ac",
+    "reports.ts": "b0e11a4e6a15e3ed474330d7cc9f1f2c4ad3b8162c4c15a91e667b7c23c94ba6",
+    "sales-math.ts": "c6339087e13c795531fdf4a8dcd48260791289250a3d9b9dc9155b355888a227",
+    "self-service.ts": "94b5707dd12eb000915aec9ddf4f71c3af000076438637022362e14ead68fc4c",
+    "staff.ts": "8ccb71bcc19540242e7c150e3c94ba6260a7e1d098d3e28a7e6c663a00a71b3f",
+    "subscriptions.ts": "e4a200682af8a12bbbb476e6293e3770c77ff65b51462d158933dfc2b32b5f73",
+    "training.ts": "a90c4d9b5f5ceda59a7e09e24a4ccf3ded84ff4ff19e1dc87f58657d0addd502"
+  }
 }

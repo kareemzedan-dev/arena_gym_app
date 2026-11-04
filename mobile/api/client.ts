@@ -115,7 +115,7 @@ export class ApiClient {
       clearTimeout(timer);
       return null;
     }
-    // Bound data before Zod 3 builds validation issues for large collections.
+    // Bound untrusted envelopes before schema validation, including unconstrained arrays.
     if (Number(response.headers.get("content-length") || 0) > 2_000_000) {
       clearTimeout(timer);
       controller.abort();

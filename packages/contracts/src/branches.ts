@@ -1,8 +1,10 @@
+// Generated from the backend by npm run sync:contracts; see docs/contracts-source.json.
+import { partialWithoutDefaults } from "../compat";
 import { z } from 'zod';
 import { BranchQuery, id, name, pageResponse, PaginationQuery, queryBoolean, timestamp } from './common';
-export const BranchRequest = z.object({ name, isActive: z.boolean().default(true) }).strict();
+export const BranchRequest = z.object({ name, isActive: z.boolean().prefault(true) }).strict();
 export type BranchRequest = z.infer<typeof BranchRequest>;
-export const BranchUpdateRequest = BranchRequest.partial().strict();
+export const BranchUpdateRequest = partialWithoutDefaults(BranchRequest).strict();
 export type BranchUpdateRequest = z.infer<typeof BranchUpdateRequest>;
 export const BranchListQuery = PaginationQuery.merge(BranchQuery).extend({ isActive: queryBoolean.optional() }).strict();
 export type BranchListQuery = z.infer<typeof BranchListQuery>;

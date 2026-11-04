@@ -19,17 +19,19 @@ Screenshots use synthetic local review accounts/data. They are actual running Re
 ## Verification evidence
 
 - Strict TypeScript checking passes.
-- 20 unit/contract tests pass: rotating-token concurrency, late unauthorized responses, logout races, failed refresh, rejected replacement tokens, no retry of forbidden writes, password-byte preservation, browser fetch binding, bounded responses, calendar dates, OMR decimals, role boundaries, plan scopes, measurements, nested training payloads and audited invoice corrections.
+- 23 unit/contract tests pass, including 115 captured backend protocol cases: rotating-token concurrency, late unauthorized responses, logout races, failed refresh, rejected replacement tokens, no retry of forbidden writes, password-byte preservation, browser fetch binding, bounded responses, calendar dates, OMR decimals, role boundaries, plan scopes, measurements, nested training payloads and audited invoice corrections.
 - Expo Doctor: 20/20 checks passed.
 - Android and iOS Hermes bundle export and web bundle export pass.
-- 4 browser integration journeys pass against a real, isolated NestJS API and temporary MariaDB, with no page errors. Latest completed run: 22.8 seconds.
+- Android/iOS native project generation passes (`expo prebuild --no-install`); this is not a signed native compilation.
+- Mobile dependency audit: **0 vulnerabilities** after Zod 4.6.7 and scoped Expo-tooling overrides for glob 14.0.2/minimatch 11.0.1. CI now checks the audit as well.
+- 4 browser integration journeys pass against a real, isolated NestJS API and temporary MariaDB, with no page errors. Latest completed run after dependency migration: 23.1 seconds.
   1. Arabic/English onboarding at 390×844 and 360×740, intro completion and login.
   2. Member membership/balances, assigned workout, meal quantities, measurement chart, coach, class booking and cancellation, invoices, language switching and logout.
   3. Coach assigned-client profile, new measurement, same-day ordering and actual class schedule.
   4. Admin scope-aware plan creation, partial invoice collection, report, server-quoted new sale, invoice correction and category create/delete.
 - Staging `GET /health` returned HTTP 200. Staging authentication and mutations were deliberately not exercised with real customer data.
 
-The live test runner creates its own fresh database container at local port 3317 and stops it when finished. Review API is local port 3105. No existing database is reset. Tests use the exact backend contracts copied from the commit recorded in `contracts-source.json`.
+The live test runner creates its own fresh database container at local port 3317 and stops it when finished. Review API is local port 3105. No existing database is reset. Tests use the backend protocol from the commit recorded in `contracts-source.json`, with a reproducible Zod 4 adapter. Source hashes and captured Zod 3 protocol outputs make the migration inspectable.
 
 ## What was repaired during verification
 
@@ -40,13 +42,20 @@ The live test runner creates its own fresh database container at local port 3317
 - Removed decorative icon glyphs from accessible button names; gave rows explicit labels.
 - Reduced icon assets to the single Ionicons family.
 - Protected authenticated responses against completion after logout and cleared sessions rejected after refresh.
+- Preserved Zod 3 PATCH omission semantics when migrating to Zod 4, preventing unrelated updates from resetting signup fees, active state or coach availability.
+- Added native system-UI support and blocked unused Android legacy storage permissions.
+
+## Dependency migration notes
+
+The mobile runtime uses Zod 4.6.7, above the fix for [oversized constrained collections](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5). The sync adapter follows the [Zod migration guide](https://zod.dev/v4/changelog) while preserving backend PATCH omission and default behavior. A regression test confirms oversized constrained arrays fail before their element transforms run. Response envelope limits remain in place for unconstrained arrays.
+
+Expo 58 still declares older glob/minimatch versions. Scoped overrides select fixes for [glob cancellation](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4) and [minimatch amplification](https://github.com/advisories/GHSA-g3hv-75wg-m249). Native project generation, bundle export and Expo fingerprint generation exercise these tooling dependencies. Remove the overrides once the Expo packages declare patched versions. The zero-advisory result covers this mobile dependency tree, not the separate backend installation.
 
 ## Remaining release gates — not claimed complete
 
 - **Signed native packages:** `eas whoami` reports “Not logged in”. Android SDK/emulator and Xcode are not installed in this environment. No signed APK, IPA or store upload exists from this work. An authorized EAS account with access to the retained project is needed for preview builds.
 - **Device acceptance:** test Android and iPhone safe areas, keyboard avoidance, system back/gestures, screen-reader navigation, large text, SecureStore persistence, app background/resume, offline retry, low-end-device animation performance, haptics and external video/PDF links. Test a real expired/rotated session on both OSes.
 - **Production target:** set `EXPO_PUBLIC_API_URL` in EAS's production environment. The build config rejects a production build without an explicit HTTPS API URL. Browser origins need explicit backend CORS configuration; native apps use direct bearer requests.
-- **Dependency advisories:** npm audit reports Zod 3 constrained-collection resource exhaustion and Expo CLI glob/minimatch advisories. This client retains Zod 3 to match the backend contracts; responses are bounded before schema parsing. These mitigations are not a declaration that the advisory is resolved. Coordinate a backend/client Zod migration and SDK tooling updates before production security sign-off; do not use npm's suggested downgrade to Expo 51.
 - **Member invoice detail/PDF:** the current backend permits these endpoints only for finance roles. Members see their permitted invoice summaries. Adding member PDF access requires an ownership-checked backend endpoint.
 - **External providers:** automatic WhatsApp, email/SMS, payment gateways and Zoom creation remain inactive, matching the backend handoff. No provider messages or bank transactions were sent during verification.
 

@@ -1,3 +1,4 @@
+import { z } from "zod";
 import React, { useState } from "react";
 import { View } from "react-native";
 import { useRouter } from "expo-router";
@@ -176,7 +177,7 @@ function ClassCard({
   item,
   member,
 }: {
-  item: (typeof ClassListResponse._type.items)[number];
+  item: z.output<typeof ClassListResponse>["items"][number];
   member: boolean;
 }) {
   const { text } = usePrefs();
@@ -284,7 +285,11 @@ function ClassCard({
     </Card>
   );
 }
-function Booking({ booking: b }: { booking: typeof OperationResponse._type }) {
+function Booking({
+  booking: b,
+}: {
+  booking: z.output<typeof OperationResponse>;
+}) {
   const { text } = usePrefs();
   const [confirm, setConfirm] = useState(false);
   const save = useSave(

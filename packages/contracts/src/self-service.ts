@@ -1,3 +1,4 @@
+// Generated from the backend by npm run sync:contracts; see docs/contracts-source.json.
 import { z } from 'zod';
 import { AttendanceListQuery } from './attendance';
 import { InvoiceListQuery } from './invoices';

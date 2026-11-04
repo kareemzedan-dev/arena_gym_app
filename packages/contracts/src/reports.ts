@@ -1,16 +1,17 @@
+// Generated from the backend by npm run sync:contracts; see docs/contracts-source.json.
 import { z } from 'zod';
 import { BranchQuery, dateOnly, id, moneyResponse, pageResponse, PaginationQuery } from './common';
-export const ReportQuery = BranchQuery.extend({ from: dateOnly, to: dateOnly, format: z.enum(['json', 'csv']).default('json') }).strict();
+export const ReportQuery = BranchQuery.extend({ from: dateOnly, to: dateOnly, format: z.enum(['json', 'csv']).prefault('json') }).strict();
 export type ReportQuery = z.infer<typeof ReportQuery>;
-export const RevenueQuery = ReportQuery.extend({ granularity: z.enum(['day', 'month', 'year']).default('day') }).strict();
+export const RevenueQuery = ReportQuery.extend({ granularity: z.enum(['day', 'month', 'year']).prefault('day') }).strict();
 export type RevenueQuery = z.infer<typeof RevenueQuery>;
 const signedMoney = z.string().regex(/^-?\d+\.\d{3}$/);
 export const ProfitBucket = z.object({ period: z.string(), netSales: signedMoney, otherIncome: signedMoney, expenses: signedMoney, profit: signedMoney, collected: signedMoney });
 export const ProfitReportResponse = z.object({
-  basis: z.literal('INVOICE_DATE'), netSales: signedMoney, salesTax: signedMoney,
-  invoicedTotal: signedMoney, otherIncome: signedMoney, expenses: signedMoney,
-  totalIncome: signedMoney, profit: signedMoney, collected: signedMoney,
-  buckets: z.array(ProfitBucket),
+    basis: z.literal('INVOICE_DATE'), netSales: signedMoney, salesTax: signedMoney,
+    invoicedTotal: signedMoney, otherIncome: signedMoney, expenses: signedMoney,
+    totalIncome: signedMoney, profit: signedMoney, collected: signedMoney,
+    buckets: z.array(ProfitBucket),
 });
 export const PagedReportQuery = ReportQuery.merge(PaginationQuery.pick({ page: true, pageSize: true })).strict();
 export type PagedReportQuery = z.infer<typeof PagedReportQuery>;
