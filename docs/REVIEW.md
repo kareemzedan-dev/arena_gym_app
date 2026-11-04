@@ -8,6 +8,8 @@ The original plan-field request is also reflected in mobile: gym and PT use the 
 
 ### Design review
 
+[Watch the icon intro and password control](previews/intro-and-password.webm) — actual web-interface recording with normal motion enabled; not a native-device performance recording.
+
 - [English intro](screenshots/01-onboarding-en.png), [Arabic intro](screenshots/01-onboarding-ar.png), [Arabic login](screenshots/02-login-ar.png), [password control](screenshots/02-password-ar.png).
 - [Member home](screenshots/03-home-en.png), [Arabic home](screenshots/03-home-ar.png).
 - [Workout](screenshots/04-workout-en.png), [nutrition](screenshots/05-nutrition-en.png), [progress](screenshots/06-progress-en.png).

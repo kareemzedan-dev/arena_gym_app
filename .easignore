@@ -12,6 +12,7 @@ src/
 locals/
 App.js
 docs/screenshots/
+docs/previews/
 e2e/
 test-results/
 playwright-report/
