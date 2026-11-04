@@ -1,6 +1,6 @@
 {
   "name": "arena-gym-mobile",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "private": true,
   "main": "expo-router/entry",
   "engines": {
@@ -13,7 +13,7 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
-    "export": "expo export --platform all",
+    "export": "expo export --platform all --max-workers 2",
     "check": "npm run typecheck && npm test",
     "sync:contracts": "node scripts/sync-contracts.mjs",
     "test:live": "node scripts/test-live.cjs",

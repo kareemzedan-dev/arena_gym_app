@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Pressable } from "react-native";
-import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
+import { ArenaMark, FitnessArt } from "../mobile/components/fitness-art";
 import { useRouter } from "expo-router";
 import { useSession } from "../mobile/state/session";
 import { usePrefs } from "../mobile/state/preferences";
@@ -21,7 +20,6 @@ export default function Login() {
   const router = useRouter();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
-  const [visible, setVisible] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<unknown>(null);
   async function submit() {
@@ -41,10 +39,7 @@ export default function Login() {
     <Screen>
       <Row style={{ justifyContent: "space-between" }}>
         <Row>
-          <Image
-            source={require("../assets/icon.png")}
-            style={{ width: 46, height: 46, borderRadius: 14 }}
-          />
+          <ArenaMark />
           <Text bold size={21}>
             ARENA
           </Text>
@@ -57,40 +52,19 @@ export default function Login() {
           <Text accent>{text("العربية", "English")}</Text>
         </Pressable>
       </Row>
-      <View
-        style={{
-          height: 240,
-          borderRadius: 28,
-          overflow: "hidden",
-          marginVertical: 6,
-        }}
-      >
-        <Image
-          source={require("../assets/arena-training.png")}
-          style={{ width: "100%", height: "100%" }}
-          contentPosition="top"
-        />
-        <LinearGradient
-          colors={["transparent", "#101716EE"]}
-          style={{
-            position: "absolute",
-            inset: 0,
-            justifyContent: "flex-end",
-            padding: 22,
-          }}
-        >
-          <Text accent size={10} bold>
-            {text("SHOW UP FOR YOURSELF", "خطوة جديدة لنفسك")}
-          </Text>
-          <Text size={29} bold>
-            {text("Good to have you back.", "سعداء برجوعك.")}
-          </Text>
-        </LinearGradient>
+      <View style={{ alignItems: "center", gap: 8 }}>
+        <FitnessArt icon="fitness-outline" size={190} />
+        <Text accent size={11} bold>
+          {text("YOUR SPACE. YOUR STRENGTH.", "مساحتك. قوتك.")}
+        </Text>
+        <Text size={28} bold style={{ textAlign: "center" }}>
+          {text("Good to have you back.", "سعداء برجوعك.")}
+        </Text>
       </View>
       <Text muted>
         {text(
           "Sign in with the account provided by your gym.",
-          "سجّل بحسابك اللي استلمته من إدارة الجيم.",
+          "سجّلي بحسابك اللي استلمته من إدارة الجيم.",
         )}
       </Text>
       <Field
@@ -106,29 +80,16 @@ export default function Login() {
         textContentType="username"
         returnKeyType="next"
       />
-      <View>
-        <Field
-          label={text("Password", "كلمة المرور")}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={!visible}
-          autoComplete="current-password"
-          textContentType="password"
-          returnKeyType="go"
-          onSubmitEditing={() => void submit()}
-        />
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={text(
-            "Show or hide password",
-            "إظهار أو إخفاء كلمة المرور",
-          )}
-          onPress={() => setVisible(!visible)}
-          style={{ alignSelf: "flex-end", padding: 12 }}
-        >
-          <Icon name={visible ? "eye-off-outline" : "eye-outline"} size={20} />
-        </Pressable>
-      </View>
+      <Field
+        label={text("Password", "كلمة المرور")}
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        autoComplete="current-password"
+        textContentType="password"
+        returnKeyType="go"
+        onSubmitEditing={() => void submit()}
+      />
       {!!error && <Failure error={error} />}
       <Button
         title={text("Sign in", "تسجيل الدخول")}
@@ -149,7 +110,7 @@ export default function Login() {
       <Text muted size={11} style={{ textAlign: "center" }}>
         {text(
           "Need an account or a password reset? Contact your gym reception.",
-          "محتاج حساب أو إعادة تعيين كلمة المرور؟ تواصل مع استقبال الجيم.",
+          "محتاجة حساب أو إعادة تعيين كلمة المرور؟ تواصلي مع استقبال الجيم.",
         )}
       </Text>
     </Screen>

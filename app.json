@@ -4,7 +4,7 @@
     "slug": "arena_gym_app",
     "icon": "./assets/icon.png",
     "owner": "1st99m",
-    "version": "4.0.0",
+    "version": "4.0.1",
     "scheme": "arenagym",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
@@ -29,7 +29,7 @@
     ],
     "android": {
       "package": "com.arenagym.app",
-      "versionCode": 29,
+      "versionCode": 30,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#30afb5"

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Linking, View } from "react-native";
-import { Image } from "expo-image";
+import { FitnessArt } from "../components/fitness-art";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import {
   MembershipResponse,
@@ -105,19 +105,13 @@ export function Coach() {
     <Screen
       back
       title={text("In your corner.", "معاك في رحلتك.")}
-      subtitle={text("YOUR COACH", "مدربك")}
+      subtitle={text("YOUR COACH", "مدربتك")}
     >
       <DataState query={q}>
         {m ? (
           <Card>
-            {m.photoUrl && (
-              <Image
-                source={{ uri: m.photoUrl }}
-                style={{ height: 260, borderRadius: 20 }}
-                contentFit="cover"
-              />
-            )}
-            <Badge>{text("YOUR COACH", "مدربك")}</Badge>
+            <FitnessArt icon="fitness-outline" size={210} />
+            <Badge>{text("YOUR COACH", "مدربتك")}</Badge>
             <Text size={30} bold>
               {m.fullName}
             </Text>
@@ -135,7 +129,7 @@ export function Coach() {
             {m.mobile && (
               <Button
                 secondary
-                title={text("Call coach", "اتصل بمدربك")}
+                title={text("Call coach", "تواصلي مع مدربتك")}
                 onPress={() =>
                   void Linking.openURL(
                     `tel:${m.mobile?.replace(/[^+\d]/g, "")}`,

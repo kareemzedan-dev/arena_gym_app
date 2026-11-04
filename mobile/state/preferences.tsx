@@ -14,7 +14,7 @@ export function Preferences({ children }: React.PropsWithChildren) {
   const [ready, setReady] = useState(false);
   const [introDone, setIntroDone] = useState(false);
   useEffect(() => {
-    AsyncStorage.multiGet(["arena.language", "arena.intro"])
+    AsyncStorage.multiGet(["arena.language", "arena.intro.icons.v1"])
       .then((values) => {
         if (values[0][1]) setAr(values[0][1] === "ar");
         setIntroDone(values[1][1] === "1");
@@ -36,7 +36,9 @@ export function Preferences({ children }: React.PropsWithChildren) {
           );
         },
         async finishIntro() {
-          await AsyncStorage.setItem("arena.intro", "1").catch(() => {});
+          await AsyncStorage.setItem("arena.intro.icons.v1", "1").catch(
+            () => {},
+          );
           setIntroDone(true);
         },
       }}

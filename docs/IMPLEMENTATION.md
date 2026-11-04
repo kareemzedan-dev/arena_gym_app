@@ -6,7 +6,7 @@ Source of truth: the five-page `arean.pdf` in arena-gym, its Nest controllers an
 
 Member: Today → Training → Progress → Account. Training contains the coach-assigned workout and nutrition plans; account leads to membership, coach, invoices, attendance, classes and notices. Coach: overview, assigned clients, calendar, account. Admin: overview, members, operations, account. Server permissions remain authoritative.
 
-Visual language: charcoal #101716, warm white #F3F5F0, Arena teal #42D5C3; Cairo Arabic typography; deliberate 8-point spacing, 24px cards, 48px minimum actions. Three onboarding stories, a focused login, contextual empty states, pull-to-refresh, visible retry actions, 180–320ms transitions, spring press feedback, optional haptics, reduced-motion support. No fabricated live metrics or medical advice. Demo content belongs only to test fixtures.
+Visual language: charcoal #101716, warm white #F3F5F0, Arena teal #42D5C3; Cairo Arabic typography; deliberate 8-point spacing, 24px cards, 48px minimum actions. Three onboarding stories, a focused login, contextual empty states, pull-to-refresh, visible retry actions, 180–280ms transitions, a prominent 900ms one-shot intro, gentle press feedback, optional haptics, reduced-motion support. No fabricated live metrics or medical advice. Demo content belongs only to test fixtures.
 
 References reviewed 2026-11-04:
 
@@ -19,7 +19,7 @@ References reviewed 2026-11-04:
 ## Tasks and subtasks
 
 - [x] 01 Discovery: read PDF, repository architecture, API handoff, old mobile routes, auth, assets and translations; identify old WordPress API incompatibility.
-- [x] 02 Design direction: preserve original Arena identity; produce an original training photograph; define tokens, navigation and typography.
+- [x] 02 Design direction: preserve original Arena identity; use large vector fitness icons for the women’s gym, without photographs; define tokens, navigation and typography.
 - [x] 03 Foundation: Expo SDK 58, TypeScript, Router, reproducible lockfile, isolated local contract package with a reproducible Zod 4 compatibility adapter, EAS development/preview/release profiles.
 - [x] 04 Authentication: atomic secure token-pair storage, single-flight refresh rotation, logout race protection, validation, account-role routing, password change, network errors.
 - [x] 05 Member experience: onboarding; dashboard; membership/session balances; workouts/videos; meals; coach; all measurement fields/history/differences; invoices; attendance; class browsing/booking; notices/messages.

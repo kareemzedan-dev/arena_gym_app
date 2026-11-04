@@ -41,6 +41,9 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
+        with:
+          # This workflow only runs trusted branch pushes/manual builds.
+          cache-read-only: false
       - run: npm ci
       - run: npm run check
       - run: npm audit --audit-level=moderate

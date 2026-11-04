@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Pressable } from "react-native";
-import { Image } from "expo-image";
+import { FitnessArt } from "../components/fitness-art";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import {
@@ -66,27 +66,21 @@ function MemberHome() {
           <Icon name="notifications-outline" color={c.text} />
         </Pressable>
       </Row>
-      <View style={{ height: 310, borderRadius: 28, overflow: "hidden" }}>
-        <Image
-          source={require("../../assets/arena-training.png")}
-          contentFit="cover"
-          contentPosition="top"
-          style={{ position: "absolute", inset: 0 }}
-        />
+      <View style={{ borderRadius: 28, overflow: "hidden" }}>
         <LinearGradient
-          colors={["transparent", "#101716ED"]}
-          locations={[0, 1]}
-          style={{ flex: 1, padding: 24, justifyContent: "flex-end", gap: 10 }}
+          colors={["#203C36", c.card]}
+          style={{ padding: 22, gap: 12 }}
         >
+          <FitnessArt icon="barbell-outline" size={200} />
           <Badge>{text("YOUR DAILY MOMENTUM", "خطوتك النهارده")}</Badge>
           <Text size={30} bold style={{ lineHeight: 41 }}>
-            {text("Make time\nfor stronger.", "خصص وقت\nلنسختك الأقوى.")}
+            {text("Make time\nfor stronger.", "خصصي وقت\nلنسختك الأقوى.")}
           </Text>
           <Button
             title={
               workout
-                ? text("View your workout", "شوف تمرينك")
-                : text("Explore your training", "اكتشف تمارينك")
+                ? text("View your workout", "شوفي تمرينك")
+                : text("Explore your training", "اكتشفي تمارينك")
             }
             onPress={() =>
               router.push(
@@ -142,17 +136,17 @@ function MemberHome() {
         )}
       </DataState>
       <Section
-        title={text("A little care goes a long way", "اهتم بنفسك خطوة بخطوة")}
+        title={text("A little care goes a long way", "اهتمي بنفسك خطوة بخطوة")}
       />
       <ListRow
         icon="restaurant-outline"
         title={text("Fuel your progress", "غذّي تطورك")}
-        subtitle={text("Your coach’s nutrition plan", "خطة التغذية من مدربك")}
+        subtitle={text("Your coach’s nutrition plan", "خطة التغذية من مدربتك")}
         onPress={() => router.push("/(app)/nutrition")}
       />
       <ListRow
         icon="calendar-outline"
-        title={text("Find your next class", "شوف حصتك الجاية")}
+        title={text("Find your next class", "شوفي حصتك الجاية")}
         subtitle={text("Your gym. Your community.", "جيمك ومجتمعك الرياضي.")}
         onPress={() => router.push("/(app)/classes")}
       />

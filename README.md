@@ -78,7 +78,7 @@ npm run check
 
 The sync adapter preserves omitted PATCH fields and pre-parse defaults, adds explicit record key schemas and adapts inline refinements. To deliberately recapture protocol fixtures from an installed backend, run `npx tsx scripts/capture-contract-fixtures.mts ../arena-gym` before changing its validators. Review fixture changes rather than accepting new expectations automatically.
 
-Dates are calendar strings in `Asia/Muscat`. OMR values remain decimal strings with three fractional digits. The UI uses server checkout totals. External media accepts only HTTP(S) URLs. Training imagery is original, generated for this project; the original Arena logo and licensed Cairo fonts remain in use.
+Dates are calendar strings in `Asia/Muscat`. OMR values remain decimal strings with three fractional digits. The UI uses server checkout totals. External media accepts only HTTP(S) URLs. The women’s gym interface uses large vector fitness icons without people or stock photographs. The original launcher logo and licensed Cairo fonts remain in use. The introductory artwork has one 900ms entrance; other transitions are short and respect reduced-motion preferences.
 
 ## Verification
 

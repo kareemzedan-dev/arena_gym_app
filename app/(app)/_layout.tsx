@@ -8,7 +8,8 @@ export default function Layout() {
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: colors.bg },
-        animation: reduced ? "none" : "slide_from_right",
+        animation: reduced ? "none" : "fade",
+        animationDuration: 180,
       }}
     />
   );

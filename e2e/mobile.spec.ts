@@ -16,7 +16,7 @@ async function connect(page: Page) {
 }
 async function login(page: Page, role: string) {
   await page.addInitScript(() => {
-    localStorage.setItem("arena.intro", "1");
+    localStorage.setItem("arena.intro.icons.v1", "1");
     localStorage.setItem("arena.language", "en");
   });
   await page.goto("/login");
@@ -52,6 +52,7 @@ test("onboarding is usable in Arabic, English and compact mobile sizes", async (
   page,
 }) => {
   const errors = await connect(page);
+  await page.addInitScript(() => localStorage.setItem("arena.intro", "1"));
   await page.goto("/");
   await expect(
     page.getByText("Your next chapter.\nStronger.", { exact: true }),
@@ -66,12 +67,100 @@ test("onboarding is usable in Arabic, English and compact mobile sizes", async (
   await page.setViewportSize({ width: 360, height: 740 });
   await page.getByRole("button", { name: "يلا نكمل", exact: true }).click();
   await page.getByRole("button", { name: "يلا نكمل", exact: true }).click();
-  await page.getByRole("button", { name: "ابدأ رحلتك", exact: true }).click();
+  await page.getByRole("button", { name: "ابدئي رحلتك", exact: true }).click();
   await expect(page.getByText("سعداء برجوعك.", { exact: true })).toBeVisible();
   await shot(page, "02-login-ar");
   await noOverflow(page);
+  expect(await page.locator("img").count()).toBe(0);
   expect(errors).toEqual([]);
 });
+test("password visibility stays inside its field in both directions without changing the password", async ({
+  page,
+}) => {
+  const errors = await connect(page);
+  await page.goto("/login");
+  const value = "  Secret #2026  ";
+  for (const ar of [false, true]) {
+    if (ar)
+      await page.getByRole("button", { name: "العربية", exact: true }).click();
+    const input = page.getByLabel(ar ? "كلمة المرور" : "Password", {
+      exact: true,
+    });
+    await input.fill(value);
+    const show = page.getByRole("button", {
+      name: ar ? "إظهار كلمة المرور" : "Show password",
+      exact: true,
+    });
+    await show.scrollIntoViewIfNeeded();
+    const fieldBox = (await input.boundingBox())!;
+    const buttonBox = (await show.boundingBox())!;
+    expect(buttonBox.width).toBeGreaterThanOrEqual(44);
+    expect(buttonBox.height).toBeGreaterThanOrEqual(44);
+    expect(buttonBox.y).toBeGreaterThanOrEqual(fieldBox.y - 1);
+    expect(buttonBox.y + buttonBox.height).toBeLessThanOrEqual(
+      fieldBox.y + fieldBox.height + 1,
+    );
+    expect(
+      Math.abs(
+        buttonBox.x -
+          (ar ? fieldBox.x : fieldBox.x + fieldBox.width - buttonBox.width),
+      ),
+    ).toBeLessThan(2);
+    await expect(input).toHaveJSProperty("type", "password");
+    await show.click();
+    await expect(input).toHaveJSProperty("type", "text");
+    await expect(input).toHaveValue(value);
+    await page
+      .getByRole("button", {
+        name: ar ? "إخفاء كلمة المرور" : "Hide password",
+        exact: true,
+      })
+      .click();
+    await expect(input).toHaveJSProperty("type", "password");
+    await expect(input).toHaveValue(value);
+    await page.setViewportSize({ width: 360, height: 640 });
+    await page
+      .getByRole("button", {
+        name: ar ? "تسجيل الدخول" : "Sign in",
+        exact: true,
+      })
+      .scrollIntoViewIfNeeded();
+    await noOverflow(page);
+  }
+  await shot(page, "02-password-ar");
+  expect(errors).toEqual([]);
+});
+
+for (const motion of ["reduce", "no-preference"] as const) {
+  test(`large icon intro settles without looping with motion=${motion}`, async ({
+    page,
+  }) => {
+    const errors = await connect(page);
+    await page.emulateMedia({ reducedMotion: motion });
+    await page.goto("/");
+    const art = page.getByTestId("fitness-art");
+    await expect(art).toBeVisible();
+    expect((await art.boundingBox())!.width).toBeGreaterThanOrEqual(300);
+    await expect
+      .poll(() =>
+        art.evaluate((el) => getComputedStyle(el.firstElementChild!).opacity),
+      )
+      .toBe("1");
+    const settled = await art.screenshot();
+    // Deliberate stability interval: catch accidental perpetual animation.
+    await page.waitForTimeout(350);
+    expect(await art.screenshot()).toEqual(settled);
+    expect(await page.locator("img").count()).toBe(0);
+    await page
+      .getByRole("button", { name: "Let’s keep moving", exact: true })
+      .click();
+    await expect(
+      page.getByText("A plan. A coach.\nYour pace.", { exact: true }),
+    ).toBeVisible();
+    await noOverflow(page);
+    expect(errors).toEqual([]);
+  });
+}
 test("member uses live membership, workouts, meals, progress, classes, invoices and language switching", async ({
   page,
 }) => {
@@ -111,7 +200,7 @@ test("member uses live membership, workouts, meals, progress, classes, invoices 
   await back(page);
   await page.getByRole("button", { name: "My coach", exact: true }).click();
   await expect(
-    page.getByText("Salim Al Balushi", { exact: true }),
+    page.getByText("Sara Al Balushi", { exact: true }),
   ).toBeVisible();
   await back(page);
   await page
@@ -159,10 +248,10 @@ test("coach sees assigned clients, adds measurements and opens real schedule", a
   const errors = await connect(page);
   await login(page, "coach");
   await tab(page, "Clients");
-  await page.getByRole("button", { name: /Ahmed Al Salmi/ }).click();
+  await page.getByRole("button", { name: /Aisha Al Salmi/ }).click();
   await expect(page.getByText("CLIENT PROFILE", { exact: true })).toBeVisible();
   await expect(
-    page.getByText("Ahmed Al Salmi", { exact: true }).last(),
+    page.getByText("Aisha Al Salmi", { exact: true }).last(),
   ).toBeVisible();
   await shot(page, "07-coach-client");
   await page
@@ -245,7 +334,7 @@ test("admin creates plans with scope-aware fields and collects an invoice paymen
   await page.getByRole("button", { name: "New sale", exact: true }).click();
   await page.getByRole("button", { name: "Select…", exact: true }).click();
   await page
-    .getByRole("button", { name: "Ahmed Al Salmi", exact: true })
+    .getByRole("button", { name: "Aisha Al Salmi", exact: true })
     .click();
   await page
     .getByRole("radio", { name: "Personal training", exact: true })

@@ -22,7 +22,7 @@ import Animated, {
   useReducedMotion,
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
@@ -127,10 +127,10 @@ export function Button({
         accessibilityState={{ disabled: !!disabled || !!busy, busy: !!busy }}
         disabled={disabled || busy}
         onPressIn={() => {
-          if (!reduced) scale.value = withSpring(0.97);
+          if (!reduced) scale.value = withTiming(0.98, { duration: 120 });
         }}
         onPressOut={() => {
-          scale.value = withSpring(1);
+          scale.value = reduced ? 1 : withTiming(1, { duration: 140 });
         }}
         onPress={() => {
           if (Platform.OS !== "web")
@@ -265,25 +265,68 @@ export function Screen({
   );
 }
 export function Field({ label, ...props }: TextInputProps & { label: string }) {
-  const { ar } = usePrefs();
+  const { ar, text } = usePrefs();
+  const [revealed, setRevealed] = useState(false);
+  const password = !!props.secureTextEntry;
   return (
     <View style={{ gap: 6 }}>
       <Text muted size={12} bold>
         {label}
       </Text>
-      <TextInput
-        accessibilityLabel={label}
-        maxLength={4096}
-        placeholderTextColor="#7B8F85"
-        selectionColor={c.accent}
-        {...props}
-        style={[
-          s.input,
-          { textAlign: ar ? "right" : "left" },
-          props.multiline && { minHeight: 100, textAlignVertical: "top" },
-          props.style,
-        ]}
-      />
+      <View testID={password ? "password-field" : undefined}>
+        <TextInput
+          accessibilityLabel={label}
+          maxLength={4096}
+          placeholderTextColor="#7B8F85"
+          selectionColor={c.accent}
+          {...props}
+          secureTextEntry={password && !revealed}
+          autoCapitalize={password ? "none" : props.autoCapitalize}
+          autoCorrect={password ? false : props.autoCorrect}
+          spellCheck={password ? false : props.spellCheck}
+          style={[
+            s.input,
+            { textAlign: ar ? "right" : "left" },
+            props.multiline && { minHeight: 100, textAlignVertical: "top" },
+            props.style,
+            password && (ar ? { paddingLeft: 58 } : { paddingRight: 58 }),
+          ]}
+        />
+        {password && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={
+              revealed
+                ? text("Hide password", "إخفاء كلمة المرور")
+                : text("Show password", "إظهار كلمة المرور")
+            }
+            accessibilityState={{
+              selected: revealed,
+              disabled: props.editable === false,
+            }}
+            disabled={props.editable === false}
+            onPress={() => setRevealed((value) => !value)}
+            style={[
+              {
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                width: 54,
+                minHeight: 48,
+                alignItems: "center",
+                justifyContent: "center",
+              },
+              ar ? { left: 0 } : { right: 0 },
+            ]}
+          >
+            <Icon
+              name={revealed ? "eye-off-outline" : "eye-outline"}
+              size={25}
+              color={c.muted}
+            />
+          </Pressable>
+        )}
+      </View>
     </View>
   );
 }
