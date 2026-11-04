@@ -1,0 +1,75 @@
+name: Android preview APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat/native-v4]
+    paths:
+      - '.github/workflows/android-preview.yml'
+      - 'app/**'
+      - 'mobile/**'
+      - 'packages/**'
+      - 'assets/**'
+      - 'app.json'
+      - 'app.config.ts'
+      - 'package*.json'
+      - 'babel.config.js'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-preview-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CI: '1'
+      EAS_BUILD_PROFILE: preview
+      EXPO_PUBLIC_API_URL: https://test-api.arenagym-om.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm ci
+      - run: npm run check
+      - run: npm audit --audit-level=moderate
+      - name: Install Android build tools
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install \
+            "platforms;android-37" "build-tools;37.0.0" \
+            "ndk;27.1.12297006" "cmake;3.22.1"
+      - name: Generate Android preview project
+        run: npx expo prebuild --no-install --platform android
+      - name: Compile standalone preview APK
+        working-directory: android
+        env:
+          NODE_ENV: production
+        # Expo's template signs this isolated preview with its development key.
+        # The release variant embeds JS/assets and does not require Metro/Expo Go.
+        run: ./gradlew :app:assembleRelease --no-daemon --max-workers=2 -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+      - name: Verify and package APK
+        run: |
+          mkdir -p apk
+          cp android/app/build/outputs/apk/release/app-release.apk apk/arena-gym-preview.apk
+          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --verbose apk/arena-gym-preview.apk
+          "$ANDROID_HOME/build-tools/37.0.0/aapt" dump badging apk/arena-gym-preview.apk > apk/package-info.txt
+          grep -q "name='com.arenagym.app.preview'" apk/package-info.txt
+          unzip -l apk/arena-gym-preview.apk | grep 'assets/index.android.bundle'
+          sha256sum apk/arena-gym-preview.apk > apk/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: arena-gym-preview-${{ github.sha }}
+          path: apk/
+          if-no-files-found: error
+          retention-days: 30
