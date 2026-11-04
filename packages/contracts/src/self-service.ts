@@ -1,0 +1,12 @@
+import { z } from 'zod';
+import { AttendanceListQuery } from './attendance';
+import { InvoiceListQuery } from './invoices';
+import { SubscriptionResponse } from './subscriptions';
+import { CoachProfileResponse } from './staff';
+import { id } from './common';
+export const MeAttendanceQuery = AttendanceListQuery.omit({ memberId: true, branchId: true }).strict();
+export type MeAttendanceQuery = z.infer<typeof MeAttendanceQuery>;
+export const MeInvoicesQuery = InvoiceListQuery.omit({ memberId: true, branchId: true }).strict();
+export type MeInvoicesQuery = z.infer<typeof MeInvoicesQuery>;
+export const MembershipResponse = z.object({ current: z.array(SubscriptionResponse), upcoming: z.array(SubscriptionResponse), lastExpired: SubscriptionResponse.nullable(), ptUsed: z.number().int(), ptRemaining: z.number().int() });
+export const MyCoachResponse = CoachProfileResponse.extend({ id, mobile: z.string().nullable() }).nullable();

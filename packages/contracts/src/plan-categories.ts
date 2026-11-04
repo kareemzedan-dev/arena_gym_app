@@ -1,0 +1,12 @@
+import { z } from 'zod';
+import { id, name, pageResponse, PaginationQuery, queryBoolean, timestamp } from './common';
+export const PlanCategoryRequest = z.object({ name, isActive: z.boolean().default(true) }).strict();
+export type PlanCategoryRequest = z.infer<typeof PlanCategoryRequest>;
+export const PlanCategoryUpdateRequest = PlanCategoryRequest.partial().strict();
+export type PlanCategoryUpdateRequest = z.infer<typeof PlanCategoryUpdateRequest>;
+export const PlanCategoryListQuery = PaginationQuery.extend({ isActive: queryBoolean.optional() }).strict();
+export type PlanCategoryListQuery = z.infer<typeof PlanCategoryListQuery>;
+export const PlanCategoryResponse = z.object({ id, name, isActive: z.boolean(), createdAt: timestamp, updatedAt: timestamp });
+export type PlanCategoryResponse = z.infer<typeof PlanCategoryResponse>;
+export const PlanCategoryListResponse = pageResponse(PlanCategoryResponse);
+export type PlanCategoryListResponse = z.infer<typeof PlanCategoryListResponse>;
