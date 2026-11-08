@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useSession } from "../state/session";
+import { canEditKind } from "../state/screen-access";
 import { configs } from "./editor-config";
 import { usePrefs } from "../state/preferences";
 import { useData, DataState } from "../components/data";
@@ -19,6 +21,8 @@ export default function Catalog({ kind: fixed }: { kind?: string }) {
   const config = configs[kind];
   const { text } = usePrefs();
   const router = useRouter();
+  const { user } = useSession();
+  const editable = canEditKind(user?.role, kind);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const q = useData(
@@ -47,7 +51,11 @@ export default function Catalog({ kind: fixed }: { kind?: string }) {
   return (
     <Screen
       back
-      title={text(config.en, config.ar)}
+      title={
+        kind === "workout-plans"
+          ? text("Workout plans", "خطط التمرين")
+          : text(config.en, config.ar)
+      }
       subtitle={text("WORKSPACE", "مساحة العمل")}
       onRefresh={() => void q.refetch()}
       refreshing={q.isRefetching}
@@ -60,13 +68,15 @@ export default function Catalog({ kind: fixed }: { kind?: string }) {
           setPage(1);
         }}
       />
-      <Button
-        title={text("Create new", "إضافة جديد")}
-        icon="add"
-        onPress={() =>
-          router.push({ pathname: "/(app)/editor", params: { kind } })
-        }
-      />
+      {editable && (
+        <Button
+          title={text("Create new", "إضافة جديد")}
+          icon="add"
+          onPress={() =>
+            router.push({ pathname: "/(app)/editor", params: { kind } })
+          }
+        />
+      )}
       <DataState query={q}>
         {data?.items.map((i) => (
           <ListRow
@@ -75,11 +85,14 @@ export default function Catalog({ kind: fixed }: { kind?: string }) {
               i.name || i.coachProfile?.fullName || i.username || `#${i.id}`
             }
             subtitle={i.price ? `${i.price} OMR` : undefined}
-            onPress={() =>
-              router.push({
-                pathname: "/(app)/editor",
-                params: { kind, id: i.id },
-              })
+            onPress={
+              editable
+                ? () =>
+                    router.push({
+                      pathname: "/(app)/editor",
+                      params: { kind, id: i.id },
+                    })
+                : undefined
             }
           />
         ))}

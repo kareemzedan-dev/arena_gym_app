@@ -144,7 +144,7 @@ export function BannerCarousel() {
                     </Text>
                     {!!banner.subtitle && (
                       <Text
-                        size={11}
+                        size={12}
                         numberOfLines={1}
                         style={{ color: "white" }}
                       >
@@ -167,7 +167,7 @@ export function BannerCarousel() {
                           justifyContent: "center",
                         }}
                       >
-                        <Text bold size={11} style={{ color: c.ink }}>
+                        <Text bold size={12} style={{ color: c.ink }}>
                           {text("Learn more", "اعرفي المزيد")}
                         </Text>
                       </Pressable>

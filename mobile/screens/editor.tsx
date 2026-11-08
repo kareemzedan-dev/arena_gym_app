@@ -3,6 +3,18 @@ import { Switch, View, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { z } from "zod";
 import { configs, type FormField } from "./editor-config";
+import {
+  editorFields,
+  editorErrors,
+  validateEditor,
+} from "./editor-validation";
+import {
+  loadWorkoutItems,
+  moveWorkoutItem,
+  removeWorkoutItem,
+  newWorkoutItem,
+  type WorkoutItemDraft,
+} from "./workout-items";
 import { usePrefs } from "../state/preferences";
 import { useData, useSave, DataState } from "../components/data";
 import {
@@ -153,7 +165,7 @@ export default function Editor() {
     ...(kind === "attendance" ? { attendedOn: today() } : {}),
     ...(kind === "assignments" ? { startDate: today() } : {}),
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [attempted, setAttempted] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const q = useData(
     `/${kind}/${id}`,
@@ -176,15 +188,7 @@ export default function Editor() {
               ? data.ptValidityDays
               : null) ?? data.durationDays;
       }
-      if (kind === "workout-plans")
-        v.items = data.items.map((i: Values) => ({
-          exerciseId: i.exerciseId,
-          sets: i.sets,
-          reps: i.reps,
-          weightKg: i.weightKg,
-          dayOfWeek: i.dayOfWeek,
-          order: i.order,
-        }));
+      if (kind === "workout-plans") v.items = loadWorkoutItems(data.items);
       if (kind === "nutrition-plans")
         v.meals = data.meals.map((m: Values) => ({
           name: m.name,
@@ -198,6 +202,7 @@ export default function Editor() {
           })),
         }));
       setValues(v);
+      setAttempted(false);
     }
   }, [q.data, kind, config]);
   const path =
@@ -219,63 +224,18 @@ export default function Editor() {
         <Empty title={text("This form is not available", "النموذج غير متاح")} />
       </Screen>
     );
+  const context = { editing: !!id, memberId };
+  const validation = validateEditor(kind, values, context);
+  const errors = editorErrors(validation, attempted);
   function change(key: string, v: unknown) {
     setValues((old) => ({ ...old, [key]: v }));
-    setErrors((e) => ({ ...e, [key]: "" }));
+    if (save.isError) save.reset();
   }
   function submit() {
-    let v: Values = { ...values };
-    for (const f of config.fields) {
-      if (v[f.key] === "" && !f.required) v[f.key] = null;
-    }
-    if (id) delete v.password;
-    if (kind === "plans") {
-      if (v.scope !== "BUNDLE") {
-        v.ptValidityDays = null;
-        v.gymAccessDays = null;
-      }
-      if (v.scope === "GYM") v.ptSessions = 0;
-    }
-    if (kind === "staff" && v.role !== "STAFF_MEMBER")
-      for (const key of [
-        "fullName",
-        "availableForPt",
-        "specialty",
-        "yearsExperience",
-        "certifications",
-        "photoUrl",
-      ])
-        delete v[key];
-    if (kind === "attendance" && v.type !== "CLASS") delete v.classId;
-    if (kind === "measurements" || kind === "assignments") delete v.memberId;
-    const schema = id ? config.update || config.request : config.request;
-    const result = schema.safeParse(v);
-    if (!result.success) {
-      const next: Record<string, string> = {};
-      for (const issue of result.error.issues)
-        next[issue.path.join(".")] = issue.message;
-      setErrors(next);
-      return;
-    }
-    setErrors({});
-    save.mutate(result.data);
+    setAttempted(true);
+    if (validation.valid) save.mutate(validation.data);
   }
-  const fields = config.fields.filter(
-    (f) =>
-      !(id && f.key === "password") &&
-      !(memberId && f.key === "memberId") &&
-      !(
-        kind === "plans" &&
-        ((f.key === "ptSessions" && values.scope === "GYM") ||
-          (["ptValidityDays", "gymAccessDays"].includes(f.key) &&
-            values.scope !== "BUNDLE"))
-      ) &&
-      !(
-        kind === "attendance" &&
-        f.key === "classId" &&
-        values.type !== "CLASS"
-      ),
-  );
+  const fields = editorFields(kind, values, context);
   return (
     <Screen
       back
@@ -304,8 +264,10 @@ export default function Editor() {
                 onChange={(v) => change(f.key, v)}
               />
               {errors[f.key] && (
-                <Text size={11} style={{ color: c.red }}>
-                  {errors[f.key]}
+                <Text size={12} style={{ color: c.red }}>
+                  {errors[f.key] === "Required"
+                    ? text("This field is required.", "هذا الحقل مطلوب.")
+                    : errors[f.key]}
                 </Text>
               )}
             </View>
@@ -327,7 +289,7 @@ export default function Editor() {
               <Text style={{ color: c.red }} accessibilityRole="alert">
                 {text(
                   "Please review the highlighted fields.",
-                  "راجع الحقول المطلوبة.",
+                  "راجع الحقول المحددة.",
                 )}
               </Text>
               {Object.entries(errors)
@@ -394,8 +356,8 @@ function WorkoutFields({
   items,
   onChange,
 }: {
-  items: Values[];
-  onChange(v: Values[]): void;
+  items: WorkoutItemDraft[];
+  onChange(v: WorkoutItemDraft[]): void;
 }) {
   const { text } = usePrefs();
   const update = (i: number, k: string, v: unknown) =>
@@ -409,21 +371,18 @@ function WorkoutFields({
             {text("Exercise", "تمرين")} {i + 1}
           </Text>
           <Picker
-            label={text("Exercise", "التمرين")}
+            label={text("Exercise *", "التمرين *")}
             endpoint="/exercises"
             value={item.exerciseId}
             onChange={(v) => update(i, "exerciseId", v)}
           />
-          {[
-            ["sets", "Sets", "المجموعات"],
-            ["reps", "Repetitions", "التكرارات"],
-            ["weightKg", "Weight · kg", "الوزن · كجم"],
+          {(
             [
-              "dayOfWeek",
-              "Day (0=Sun … 6=Sat, optional)",
-              "اليوم (٠=الأحد … ٦=السبت، اختياري)",
-            ],
-          ].map(([key, en, ar]) => (
+              ["sets", "Sets *", "المجموعات *"],
+              ["reps", "Repetitions *", "التكرارات *"],
+              ["weightKg", "Weight · kg", "الوزن · كجم"],
+            ] as const
+          ).map(([key, en, ar]) => (
             <Field
               key={key}
               label={text(en, ar)}
@@ -438,34 +397,60 @@ function WorkoutFields({
               }
             />
           ))}
+          <Text muted size={12}>
+            {text("Weekday (optional)", "يوم الأسبوع (اختياري)")}
+          </Text>
+          <Chips
+            value={item.dayOfWeek == null ? "any" : String(item.dayOfWeek)}
+            onChange={(v) =>
+              update(i, "dayOfWeek", v === "any" ? null : Number(v))
+            }
+            options={[
+              { value: "any", label: text("Any day", "أي يوم") },
+              ...[
+                ["Sunday", "الأحد"],
+                ["Monday", "الاثنين"],
+                ["Tuesday", "الثلاثاء"],
+                ["Wednesday", "الأربعاء"],
+                ["Thursday", "الخميس"],
+                ["Friday", "الجمعة"],
+                ["Saturday", "السبت"],
+              ].map(([en, ar], day) => ({
+                value: String(day),
+                label: text(en, ar),
+              })),
+            ]}
+          />
+          <Row>
+            <View style={{ flex: 1 }}>
+              <Button
+                secondary
+                title={text("Move up", "نقل لأعلى")}
+                disabled={i === 0}
+                onPress={() => onChange(moveWorkoutItem(items, i, -1))}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Button
+                secondary
+                title={text("Move down", "نقل لأسفل")}
+                disabled={i === items.length - 1}
+                onPress={() => onChange(moveWorkoutItem(items, i, 1))}
+              />
+            </View>
+          </Row>
           <Button
             secondary
             title={text("Remove exercise", "حذف التمرين")}
-            onPress={() =>
-              onChange(
-                items
-                  .filter((_, n) => n !== i)
-                  .map((v, order) => ({ ...v, order })),
-              )
-            }
+            onPress={() => onChange(removeWorkoutItem(items, i))}
           />
         </Card>
       ))}
       <Button
         secondary
         title={text("Add exercise", "إضافة تمرين")}
-        onPress={() =>
-          onChange([
-            ...items,
-            {
-              sets: 3,
-              reps: 12,
-              weightKg: null,
-              dayOfWeek: null,
-              order: items.length,
-            },
-          ])
-        }
+        disabled={items.length >= 200}
+        onPress={() => onChange([...items, newWorkoutItem(items.length)])}
       />
     </>
   );

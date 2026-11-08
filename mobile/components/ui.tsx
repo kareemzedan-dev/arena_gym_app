@@ -190,6 +190,7 @@ export function Screen({
   action,
   refreshing = false,
   onRefresh,
+  compact = false,
 }: React.PropsWithChildren<{
   title?: string;
   subtitle?: string;
@@ -197,6 +198,7 @@ export function Screen({
   action?: React.ReactNode;
   refreshing?: boolean;
   onRefresh?: () => void;
+  compact?: boolean;
 }>) {
   const router = useRouter();
   const { text, ar } = usePrefs();
@@ -211,7 +213,10 @@ export function Screen({
       >
         <ScrollView
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={s.page}
+          contentContainerStyle={[
+            s.page,
+            compact && { padding: 16, paddingBottom: 32, gap: 12 },
+          ]}
           refreshControl={
             onRefresh ? (
               <RefreshControl
@@ -251,7 +256,7 @@ export function Screen({
                     {subtitle}
                   </Text>
                 )}
-                <Text size={28} bold>
+                <Text size={compact ? 23 : 28} bold>
                   {title}
                 </Text>
               </View>
@@ -344,14 +349,16 @@ export function Section({
   title,
   action,
   onPress,
+  compact = false,
 }: {
+  compact?: boolean;
   title: string;
   action?: string;
   onPress?: () => void;
 }) {
   return (
     <Row style={{ justifyContent: "space-between", marginTop: 8 }}>
-      <Text size={19} bold>
+      <Text size={compact ? 16 : 19} bold style={{ flexShrink: 1 }}>
         {title}
       </Text>
       {action && (
@@ -392,7 +399,9 @@ export function Stat({
   value,
   label,
   unit,
+  compact = false,
 }: {
+  compact?: boolean;
   value: string | number;
   label: string;
   unit?: string;
@@ -400,7 +409,7 @@ export function Stat({
   return (
     <View style={{ flex: 1, gap: 3 }}>
       <Row style={{ gap: 4, alignItems: "baseline" }}>
-        <Text bold size={29}>
+        <Text bold size={compact ? 23 : 29} style={{ flexShrink: 1 }}>
           {value}
         </Text>
         {unit && (
@@ -409,7 +418,7 @@ export function Stat({
           </Text>
         )}
       </Row>
-      <Text muted size={11}>
+      <Text muted size={compact ? 12 : 11}>
         {label}
       </Text>
     </View>
@@ -506,7 +515,9 @@ export function ListRow({
   icon,
   onPress,
   trailing,
+  compact = false,
 }: {
+  compact?: boolean;
   title: string;
   subtitle?: string;
   icon?: React.ComponentProps<typeof Icon>["name"];
@@ -521,6 +532,7 @@ export function ListRow({
       accessibilityLabel={onPress ? title : undefined}
       style={({ pressed }) => [
         s.listRow,
+        compact && { padding: 16 },
         pressed && onPress && { backgroundColor: c.raised },
       ]}
     >
@@ -533,7 +545,7 @@ export function ListRow({
         <View style={{ flex: 1 }}>
           <Text bold>{title}</Text>
           {subtitle && (
-            <Text size={11} muted>
+            <Text size={compact ? 12 : 11} muted>
               {subtitle}
             </Text>
           )}

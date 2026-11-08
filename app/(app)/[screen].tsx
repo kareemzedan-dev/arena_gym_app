@@ -26,9 +26,11 @@ import {
   Reports,
 } from "../../mobile/screens/commerce";
 export default function Detail() {
-  const { screen, kind } = useLocalSearchParams<{
+  const { screen, kind, id, memberId } = useLocalSearchParams<{
     screen: string;
     kind?: string;
+    id?: string;
+    memberId?: string;
   }>();
   const { user, ready } = useSession();
   const { text } = usePrefs();
@@ -73,7 +75,7 @@ export default function Detail() {
     "nutrition-plans": <Catalog />,
     exercises: <Catalog />,
     attendance: <Editor />,
-    editor: <Editor key={`${kind || ""}`} />,
+    editor: <Editor key={`${kind || ""}:${id || "new"}:${memberId || ""}`} />,
   };
   const element = screens[screen];
   return (

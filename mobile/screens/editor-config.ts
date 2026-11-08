@@ -233,6 +233,7 @@ export const configs: Record<string, EditorConfig> = {
     en: "Workout plan",
     ar: "خطة التمرين",
     request: S.WorkoutRequest,
+    update: S.WorkoutUpdateRequest,
     response: S.WorkoutResponse,
     list: S.WorkoutListResponse,
     fields: [field("name", "Plan name", "اسم الخطة", "text", true)],

@@ -231,7 +231,7 @@ export function Workspace() {
     ["schedule", "Schedule", "جدول الحصص", true],
     ["classes", "Classes", "الحصص", canTrain(role)],
     ["attendance", "Take attendance", "تسجيل الحضور", canTrain(role)],
-    ["workout-plans", "Workout library", "خطط التمارين", canTrain(role)],
+    ["workout-plans", "Workout plans", "خطط التمرين", canTrain(role)],
     ["exercises", "Exercise library", "التمارين", canTrain(role)],
     ["nutrition-plans", "Nutrition plans", "خطط التغذية", canTrain(role)],
     ["staff", "Coaches & team", "المدربون والفريق", canManage(role)],

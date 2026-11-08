@@ -52,29 +52,33 @@ export function resolveScreenAccess(
     case "nutrition-plans":
     case "attendance":
       return trainer ? "allow" : "home";
-    case "editor": {
-      if (typeof kind !== "string") return "home";
-      const trainingKinds = [
-        "measurements",
-        "assignments",
-        "workout-plans",
-        "nutrition-plans",
-        "exercises",
-        "attendance",
-      ];
-      const adminKinds = [
-        "members",
-        "staff",
-        "plans",
-        "plan-categories",
-        "classes",
-      ];
-      return (trainer && trainingKinds.includes(kind)) ||
-        (admin && adminKinds.includes(kind))
-        ? "allow"
-        : "home";
-    }
+    case "editor":
+      return canEditKind(role, kind) ? "allow" : "home";
     default:
       return "home";
   }
+}
+
+/** Shared by deep links and catalog create/edit actions. */
+export function canEditKind(role: string | undefined, kind: unknown): boolean {
+  if (typeof kind !== "string") return false;
+  const trainingKinds = [
+    "measurements",
+    "assignments",
+    "workout-plans",
+    "nutrition-plans",
+    "exercises",
+    "attendance",
+  ];
+  const adminKinds = [
+    "members",
+    "staff",
+    "plans",
+    "plan-categories",
+    "classes",
+  ];
+  return (
+    (canTrain(role) && trainingKinds.includes(kind)) ||
+    (canManage(role) && adminKinds.includes(kind))
+  );
 }
