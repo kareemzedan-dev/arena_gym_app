@@ -40,11 +40,42 @@ export function SessionProvider({ children }: React.PropsWithChildren) {
     );
     return () => listener.remove();
   }, []);
+  // Keep the established identity while validating on resume. request() performs
+  // single-flight token rotation on 401 and rejects responses from old sessions.
+  useEffect(() => {
+    if (!ready || !user) return;
+    let mounted = true;
+    let flight: Promise<void> | null = null;
+    const resume = () => {
+      if (flight) return;
+      flight = api
+        .request("/users/me", Me)
+        .then((me) => {
+          if (mounted) setUser(me);
+        })
+        .catch(() => {
+          /* Session loss is handled centrally; offline resumes retain identity. */
+        })
+        .finally(() => {
+          flight = null;
+        });
+    };
+    const listener = AppState.addEventListener("change", (state) => {
+      if (state === "active") resume();
+    });
+    return () => {
+      mounted = false;
+      listener.remove();
+    };
+  }, [ready, user?.id]);
   useEffect(() => {
     let mounted = true;
     api.onSessionLost = () => {
       queryClient.clear();
-      if (mounted) setUser(null);
+      if (mounted) {
+        setUser(null);
+        setBootError(false);
+      }
     };
     (async () => {
       setReady(false);

@@ -29,6 +29,7 @@ import {
 import { dateLabel, canManage, canTrain } from "../api/format";
 export function Membership() {
   const { text, ar } = usePrefs();
+  const router = useRouter();
   const q = useData("/me/membership", MembershipResponse);
   return (
     <Screen
@@ -38,6 +39,11 @@ export function Membership() {
       onRefresh={() => void q.refetch()}
       refreshing={q.isRefetching}
     >
+      <Button
+        title={text("Check in with QR", "الدخول برمز QR")}
+        icon="qr-code-outline"
+        onPress={() => router.push("/(app)/checkin")}
+      />
       <DataState query={q}>
         <Card>
           <Row>
@@ -88,7 +94,7 @@ export function Membership() {
               title={text("No membership yet", "لا يوجد اشتراك بعد")}
               detail={text(
                 "Your gym reception can help you get started.",
-                "تواصل مع استقبال الجيم لبدء اشتراكك.",
+                "تواصل مع استقبال النادي لبدء اشتراكك.",
               )}
             />
           )}
@@ -99,12 +105,11 @@ export function Membership() {
 export function Coach() {
   const { text } = usePrefs();
   const q = useData("/me/coach", MyCoachResponse);
-  const router = useRouter();
   const m = q.data;
   return (
     <Screen
       back
-      title={text("In your corner.", "معاك في رحلتك.")}
+      title={text("In your corner.", "معك في رحلتك.")}
       subtitle={text("YOUR COACH", "مدربتك")}
     >
       <DataState query={q}>
@@ -122,10 +127,6 @@ export function Coach() {
               </Text>
             )}
             {m.certifications && <Text>{m.certifications}</Text>}
-            <Button
-              title={text("Send a message", "إرسال رسالة")}
-              onPress={() => router.push("/(app)/messages")}
-            />
             {m.mobile && (
               <Button
                 secondary
@@ -140,10 +141,10 @@ export function Coach() {
           </Card>
         ) : (
           <Empty
-            title={text("Your coach will be here", "مدربك هيظهر هنا")}
+            title={text("Your coach will be here", "ستظهر مدربتك هنا")}
             detail={text(
               "Reception will connect you with your coach.",
-              "الاستقبال هيربط حسابك بمدربك.",
+              "سيربط الاستقبال حسابك بمدربتك.",
             )}
           />
         )}
@@ -163,7 +164,7 @@ export function History() {
   return (
     <Screen
       back
-      title={text("Showing up counts.", "كل حضور بيفرق.")}
+      title={text("Showing up counts.", "كل حضور يصنع فرقًا.")}
       subtitle={text("ATTENDANCE", "الحضور")}
     >
       <DataState query={q}>
@@ -177,7 +178,7 @@ export function History() {
         ))}
         {!q.data?.items.length && (
           <Empty
-            title={text("Your visits will appear here", "زياراتك هتظهر هنا")}
+            title={text("Your visits will appear here", "ستظهر زياراتك هنا")}
           />
         )}
         <Row>

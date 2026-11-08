@@ -93,7 +93,7 @@ export function Pos() {
         value={scope}
         onChange={setScope}
         options={[
-          { value: "GYM", label: text("Gym", "الجيم") },
+          { value: "GYM", label: text("Gym", "النادي") },
           { value: "PT", label: text("Personal training", "تدريب شخصي") },
           { value: "BUNDLE", label: text("Bundle", "باقة") },
         ]}
@@ -711,7 +711,7 @@ export function InvoiceEdit() {
                 <Text muted size={12}>
                   {text(
                     "These are record corrections, not bank refunds. Retain every payment that should remain.",
-                    "دي تصحيحات للسجلات وليست عمليات استرداد بنكية. احتفظ بكل دفعة صحيحة.",
+                    "هذه تصحيحات للسجلات وليست عمليات استرداد بنكية. احتفظ بكل دفعة صحيحة.",
                   )}
                 </Text>
                 <Field

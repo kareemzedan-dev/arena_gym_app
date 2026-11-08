@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import {
   ClassListResponse,
   CoachScheduleResponse,
+  CoachPtBookingListResponse,
   ScheduleResponse,
   OperationListResponse,
   OperationResponse,
@@ -26,7 +27,8 @@ import {
   Failure,
   ListRow,
 } from "../components/ui";
-import { today, addDays, dateLabel, canManage } from "../api/format";
+import { mergeSchedule } from "../api/schedule";
+import { today, addDays, dateLabel, timeLabel, canManage } from "../api/format";
 export function Schedule() {
   const { user } = useSession();
   const { text, ar } = usePrefs();
@@ -43,12 +45,22 @@ export function Schedule() {
   );
   const data = q.data;
   const classes = Array.isArray(data) ? data : data?.classes;
-  const pt = Array.isArray(data) ? [] : data?.ptBookings;
+  const pt = useData(
+    `/coaches/me/pt-bookings?from=${from}&to=${to}`,
+    CoachPtBookingListResponse,
+    valid && coach,
+  );
+  const entries = mergeSchedule(classes || [], coach ? pt.data || [] : []);
   return (
     <Screen
       back
       title={text("Make room for movement.", "وقت للحركة.")}
       subtitle={text("WEEKLY SCHEDULE", "الجدول الأسبوعي")}
+      onRefresh={() => {
+        void q.refetch();
+        if (coach) void pt.refetch();
+      }}
+      refreshing={q.isRefetching || (coach && pt.isRefetching)}
     >
       <Field
         label={text("Week starts · YYYY-MM-DD", "بداية الأسبوع · YYYY-MM-DD")}
@@ -57,33 +69,50 @@ export function Schedule() {
       />
       {valid ? (
         <DataState query={q}>
-          {classes?.map((s, i) => (
-            <Card key={`${s.id}-${i}`}>
-              <Badge>{dateLabel(s.date, ar)}</Badge>
-              <Text bold size={21}>
-                {s.name}
-              </Text>
-              <Text accent>
-                {s.startTime} — {s.endTime}
-              </Text>
-              <Text muted>
-                {s.coach?.fullName} · {s.branch?.name}
-              </Text>
-            </Card>
-          ))}
-          {pt?.map((p) => (
-            <Card key={`pt-${p.id}`}>
-              <Badge>{dateLabel(p.sessionDate, ar)}</Badge>
-              <Text bold>{p.memberName}</Text>
-              <Text accent>
-                {p.startTime} — {p.endTime}
-              </Text>
-              <Text muted>PT · {p.status}</Text>
-            </Card>
-          ))}
-          {!classes?.length && !pt?.length && (
+          {coach && <DataState query={pt} />}
+          {entries.map((entry) => {
+            const s = entry.item;
+            return (
+              <Card
+                key={`${entry.kind}-${s.id}-${s.startsAt}`}
+                style={
+                  entry.kind === "pt"
+                    ? { borderColor: "#42D5C3", backgroundColor: "#203B34" }
+                    : undefined
+                }
+              >
+                <Badge>{dateLabel(s.startsAt, ar)}</Badge>
+                {entry.kind === "pt" ? (
+                  <>
+                    <Text accent bold>
+                      {text("Personal training", "تدريب شخصي")}
+                    </Text>
+                    <Text bold size={21}>
+                      {entry.item.memberName}
+                    </Text>
+                  </>
+                ) : (
+                  <Text bold size={21}>
+                    {entry.item.name}
+                  </Text>
+                )}
+                <Text accent>
+                  {timeLabel(s.startsAt, ar)} — {timeLabel(s.endsAt, ar)}
+                </Text>
+                <Text muted>
+                  {entry.kind === "pt"
+                    ? `${entry.item.coachName} · ${entry.item.status}`
+                    : `${entry.item.coach?.fullName || ""} · ${entry.item.branch?.name || ""}`}
+                </Text>
+              </Card>
+            );
+          })}
+          {!entries.length && (!coach || (!pt.isPending && !pt.error)) && (
             <Empty
-              title={text("A little room in your week", "أسبوعك فيه مساحة")}
+              title={text(
+                "A little room in your week",
+                "لديك وقت متاح هذا الأسبوع",
+              )}
               detail={text(
                 "No sessions scheduled for this week.",
                 "لا توجد حصص مسجلة لهذا الأسبوع.",
@@ -117,8 +146,8 @@ export function Classes() {
   return (
     <Screen
       back
-      title={text("Find your energy.", "لاقي طاقتك.")}
-      subtitle={text("CLASSES", "الكلاسات")}
+      title={text("Find your energy.", "اكتشفي طاقتك.")}
+      subtitle={text("CLASSES", "الحصص")}
       onRefresh={() => {
         void q.refetch();
         void bookings.refetch();
@@ -127,7 +156,7 @@ export function Classes() {
     >
       {canManage(user?.role) && (
         <Button
-          title={text("Add class", "إضافة كلاس")}
+          title={text("Add class", "إضافة حصة")}
           onPress={() =>
             router.push({
               pathname: "/(app)/editor",
@@ -141,7 +170,7 @@ export function Classes() {
           <ClassCard key={m.id} item={m} member={member} />
         ))}
         {!q.data?.items.length && (
-          <Empty title={text("No classes available", "لا توجد كلاسات متاحة")} />
+          <Empty title={text("No classes available", "لا توجد حصص متاحة")} />
         )}
         <Row>
           {page > 1 && (
@@ -199,7 +228,7 @@ function ClassCard({
     item.weekDays.includes(new Date(`${date}T12:00:00Z`).getUTCDay());
   return (
     <Card>
-      <Badge>{item.coach?.fullName || text("Arena class", "كلاس أرينا")}</Badge>
+      <Badge>{item.coach?.fullName || text("Arena class", "حصة أرينا")}</Badge>
       <Text bold size={23}>
         {item.name}
       </Text>
@@ -241,7 +270,7 @@ function ClassCard({
             <Text size={11}>
               {text(
                 "Choose a scheduled day within the class dates.",
-                "اختر يومًا من أيام الكلاس داخل فترة إتاحته.",
+                "اختر يومًا من أيام الحصة داخل فترة إتاحته.",
               )}
             </Text>
           )}
@@ -273,7 +302,7 @@ function ClassCard({
       {canManage(user?.role) && (
         <Button
           secondary
-          title={text("Edit class", "تعديل الكلاس")}
+          title={text("Edit class", "تعديل الحصة")}
           onPress={() =>
             router.push({
               pathname: "/(app)/editor",

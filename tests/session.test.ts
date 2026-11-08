@@ -212,3 +212,56 @@ test("a rejected newly refreshed access token ends the session", async () => {
   assert.equal(await store.read(), null);
   assert.equal(lost, 1);
 });
+
+test("a delayed cold-start restore cannot resurrect tokens after logout", async () => {
+  const release = defer();
+  let stored: typeof pair | null = pair;
+  const store: SessionStore = {
+    read: async () => {
+      const captured = stored;
+      await release.promise;
+      return captured;
+    },
+    write: async (value) => {
+      stored = value;
+    },
+  };
+  const client = new ApiClient("https://api.test", store, async () =>
+    json("unexpected"),
+  );
+  const restore = client.restore();
+  await client.logout();
+  release.resolve();
+  assert.equal(await restore, false);
+  await assert.rejects(
+    client.request("/users/me", z.unknown()),
+    (error: unknown) => error instanceof ApiError && error.status === 401,
+  );
+  assert.equal(stored, null);
+});
+
+test("foreground identity validation rotates expired tokens and preserves the full name", async () => {
+  const { Me } = await import("@arena/shared");
+  const me = {
+    id: 1,
+    username: "m@gmail.com",
+    fullName: "مريم أحمد",
+    mobile: null,
+    email: "m@gmail.com",
+    role: "MEMBER",
+    isActive: true,
+    branchId: null,
+    lastLoginAt: null,
+  };
+  const store = storage();
+  const client = new ApiClient("https://api.test", store, async (url, init) => {
+    if (String(url).endsWith("/auth/refresh")) return json(fresh);
+    return new Headers(init?.headers).get("Authorization") ===
+      "Bearer old-access"
+      ? json({}, 401)
+      : json(me);
+  });
+  await client.restore();
+  assert.deepEqual(await client.request("/users/me", Me), me);
+  assert.deepEqual(await store.read(), fresh);
+});

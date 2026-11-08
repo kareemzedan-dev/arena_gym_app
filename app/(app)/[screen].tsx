@@ -1,9 +1,10 @@
 import React from "react";
-import { useLocalSearchParams } from "expo-router";
+import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import { useSession } from "../../mobile/state/session";
 import { usePrefs } from "../../mobile/state/preferences";
-import { canManage, canFinance, canTrain } from "../../mobile/api/format";
-import { Screen, Empty } from "../../mobile/components/ui";
+import { resolveScreenAccess } from "../../mobile/state/screen-access";
+import CheckIn from "../../mobile/screens/checkin";
+import { Screen, Empty, Loading, Button } from "../../mobile/components/ui";
 import { Workout, Nutrition } from "../../mobile/screens/training";
 import {
   Membership,
@@ -29,54 +30,52 @@ export default function Detail() {
     screen: string;
     kind?: string;
   }>();
-  const { user } = useSession();
+  const { user, ready } = useSession();
   const { text } = usePrefs();
-  const role = user?.role;
-  const member = role === "MEMBER";
-  const admin = canManage(role);
-  const trainer = canTrain(role);
-  const finance = canFinance(role);
-  let element: React.ReactNode = null;
-  if (screen === "password") element = <Password />;
-  if (["notices", "messages"].includes(screen))
-    element = <Community kind={screen as "notices" | "messages"} />;
-  if (screen === "classes" && (member || trainer)) element = <Classes />;
-  if (screen === "schedule" && !member) element = <Schedule />;
-  if (screen === "invoices" && (member || finance)) element = <Invoices />;
-  if (screen === "history") element = <History />;
-  if (screen === "workout" && (member || trainer)) element = <Workout />;
-  if (screen === "measurements" && (member || trainer))
-    element = <Measurements />;
-  if (screen === "membership" && member) element = <Membership />;
-  if (screen === "coach" && member) element = <Coach />;
-  if (screen === "nutrition" && member) element = <Nutrition />;
-  if (screen === "client" && !member) element = <Client />;
-  if (screen === "pos" && finance) element = <Pos />;
-  if (screen === "invoice" && finance) element = <Invoice />;
-  if (screen === "invoice-edit" && admin) element = <InvoiceEdit />;
-  if (screen === "reports" && finance) element = <Reports />;
-  if (["staff", "plans", "plan-categories"].includes(screen) && admin)
-    element = <Catalog />;
-  if (
-    ["workout-plans", "nutrition-plans", "exercises"].includes(screen) &&
-    trainer
-  )
-    element = <Catalog />;
-  if (screen === "attendance" && trainer) element = <Editor />;
-  if (
-    screen === "editor" &&
-    (admin ||
-      (trainer &&
-        [
-          "measurements",
-          "assignments",
-          "workout-plans",
-          "nutrition-plans",
-          "exercises",
-          "attendance",
-        ].includes(kind || "")))
-  )
-    element = <Editor />;
+  const router = useRouter();
+  const access = resolveScreenAccess(
+    screen,
+    user?.role,
+    !ready ? "restoring" : user ? "authenticated" : "anonymous",
+    kind,
+  );
+  if (access === "loading")
+    return (
+      <Screen>
+        <Loading />
+      </Screen>
+    );
+  if (access === "login") return <Redirect href="/login" />;
+  if (access === "home") return <Redirect href="/(app)/(tabs)/home" />;
+  const screens: Record<string, React.ReactNode> = {
+    password: <Password />,
+    notices: <Community kind="notices" />,
+    messages: <Community kind="messages" />,
+    classes: <Classes />,
+    schedule: <Schedule />,
+    invoices: <Invoices />,
+    history: <History />,
+    workout: <Workout />,
+    measurements: <Measurements />,
+    membership: <Membership />,
+    coach: <Coach />,
+    nutrition: <Nutrition />,
+    checkin: <CheckIn />,
+    client: <Client />,
+    pos: <Pos />,
+    invoice: <Invoice />,
+    "invoice-edit": <InvoiceEdit />,
+    reports: <Reports />,
+    staff: <Catalog />,
+    plans: <Catalog />,
+    "plan-categories": <Catalog />,
+    "workout-plans": <Catalog />,
+    "nutrition-plans": <Catalog />,
+    exercises: <Catalog />,
+    attendance: <Editor />,
+    editor: <Editor key={`${kind || ""}`} />,
+  };
+  const element = screens[screen];
   return (
     element || (
       <Screen back>
@@ -85,6 +84,10 @@ export default function Detail() {
             "This page is not available for your account.",
             "الصفحة غير متاحة لحسابك.",
           )}
+        />
+        <Button
+          title={text("Go home", "العودة إلى الرئيسية")}
+          onPress={() => router.replace("/(app)/(tabs)/home")}
         />
       </Screen>
     )

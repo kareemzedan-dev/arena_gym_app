@@ -267,9 +267,10 @@ export function Screen({
 export function Field({ label, ...props }: TextInputProps & { label: string }) {
   const { ar, text } = usePrefs();
   const [revealed, setRevealed] = useState(false);
+  const [focused, setFocused] = useState(false);
   const password = !!props.secureTextEntry;
   return (
-    <View style={{ gap: 6 }}>
+    <View style={{ gap: 8 }}>
       <Text muted size={12} bold>
         {label}
       </Text>
@@ -280,12 +281,21 @@ export function Field({ label, ...props }: TextInputProps & { label: string }) {
           placeholderTextColor="#7B8F85"
           selectionColor={c.accent}
           {...props}
+          onFocus={(event) => {
+            setFocused(true);
+            props.onFocus?.(event);
+          }}
+          onBlur={(event) => {
+            setFocused(false);
+            props.onBlur?.(event);
+          }}
           secureTextEntry={password && !revealed}
           autoCapitalize={password ? "none" : props.autoCapitalize}
           autoCorrect={password ? false : props.autoCorrect}
           spellCheck={password ? false : props.spellCheck}
           style={[
             s.input,
+            focused && { borderColor: c.accent },
             { textAlign: ar ? "right" : "left" },
             props.multiline && { minHeight: 100, textAlignVertical: "top" },
             props.style,
@@ -457,7 +467,7 @@ export function Failure({
               : code === 409
                 ? text(
                     "This record changed or conflicts with an existing record. Refresh and review.",
-                    "البيانات اتغيرت أو متعارضة مع سجل موجود. حدّث وراجع البيانات.",
+                    "تغيّرت البيانات أو تعارضت مع سجل موجود. حدّث البيانات وراجعها.",
                   )
                 : code === 400
                   ? text(

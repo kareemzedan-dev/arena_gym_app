@@ -28,11 +28,9 @@ export default function Account() {
       ? [
           ["membership", "My membership", "عضويتي"],
           ["coach", "My coach", "مدربي"],
-          ["classes", "Classes & bookings", "الكلاسات والحجوزات"],
+          ["classes", "Classes & bookings", "الحصص والحجوزات"],
           ["invoices", "My invoices", "فواتيري"],
           ["history", "Attendance history", "سجل الحضور"],
-          ["notices", "Announcements", "الإعلانات"],
-          ["messages", "Messages", "الرسائل"],
         ]
       : [
           ["schedule", "Schedule", "جدول الحصص"],
@@ -157,7 +155,7 @@ export function Password() {
       <Text muted size={12}>
         {text(
           "You will sign in again after changing your password.",
-          "هتسجل دخولك مجددًا بعد تغيير كلمة المرور.",
+          "ستسجّلين الدخول مجددًا بعد تغيير كلمة المرور.",
         )}
       </Text>
       {save.error && <Failure error={save.error} />}

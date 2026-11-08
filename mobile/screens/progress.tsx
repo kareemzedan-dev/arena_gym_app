@@ -31,7 +31,7 @@ export const measurementNames: Record<string, [string, string]> = {
   hips: ["Hips", "الأرداف"],
   arm: ["Arm", "الذراع"],
   thigh: ["Thigh", "الفخذ"],
-  calf: ["Calf", "السمانة"],
+  calf: ["Calf", "ربلة الساق"],
   glutes: ["Glutes", "المؤخرة"],
   leg: ["Leg", "الساق"],
 };
@@ -42,6 +42,7 @@ export default function Progress() {
 export function Measurements() {
   const { memberId } = useLocalSearchParams<{ memberId?: string }>();
   const { text, ar } = usePrefs();
+  const { user } = useSession();
   const router = useRouter();
   const q = useData(
     memberId ? `/members/${memberId}/measurements` : "/me/measurements",
@@ -81,7 +82,7 @@ export function Measurements() {
       onRefresh={() => void q.refetch()}
       refreshing={q.isRefetching}
     >
-      {memberId && (
+      {memberId && canTrain(user?.role) && (
         <Button
           title={text("Add measurement", "إضافة قياس")}
           onPress={() =>
@@ -159,7 +160,7 @@ export function Measurements() {
                 <Text muted size={12}>
                   {text(
                     "Your trend appears after the next measurement.",
-                    "الرسم هيظهر بعد إضافة القياس القادم.",
+                    "سيظهر الرسم بعد إضافة القياس القادم.",
                   )}
                 </Text>
               )}
@@ -208,7 +209,7 @@ export function Measurements() {
           <Empty
             title={text(
               "Progress starts with a first step",
-              "التطور بيبدأ بأول خطوة",
+              "التطور يبدأ بالخطوة الأولى",
             )}
             detail={text(
               "Ask your coach to record your first measurements.",
@@ -228,7 +229,7 @@ export function Workspace() {
   const role = user?.role;
   const links: [string, string, string, boolean][] = [
     ["schedule", "Schedule", "جدول الحصص", true],
-    ["classes", "Classes", "الكلاسات", canTrain(role)],
+    ["classes", "Classes", "الحصص", canTrain(role)],
     ["attendance", "Take attendance", "تسجيل الحضور", canTrain(role)],
     ["workout-plans", "Workout library", "خطط التمارين", canTrain(role)],
     ["exercises", "Exercise library", "التمارين", canTrain(role)],
@@ -260,7 +261,7 @@ export function Workspace() {
       <Text muted>
         {text(
           "The tools you need, wherever your day takes you.",
-          "أدواتك معاك أينما كنت.",
+          "أدواتك معك أينما كنت.",
         )}
       </Text>
       {links

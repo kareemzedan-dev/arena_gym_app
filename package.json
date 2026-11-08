@@ -1,6 +1,6 @@
 {
   "name": "arena-gym-mobile",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "private": true,
   "main": "expo-router/entry",
   "engines": {
@@ -12,7 +12,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test tests/*.test.ts",
+    "test": "node --import tsx --test --test-isolation=none tests/*.test.ts",
     "export": "expo export --platform all --max-workers 2",
     "check": "npm run typecheck && npm test",
     "sync:contracts": "node scripts/sync-contracts.mjs",
@@ -40,6 +40,7 @@
     "expo-splash-screen": "~58.0.13",
     "expo-status-bar": "~58.0.4",
     "expo-system-ui": "~58.0.7",
+    "qrcode": "1.5.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-native": "0.88.1",
@@ -54,6 +55,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",
+    "@types/qrcode": "1.5.5",
     "@types/react": "~19.3.0",
     "prettier": "^3.9.10",
     "tsx": "^4.20.6",

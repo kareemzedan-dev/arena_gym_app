@@ -54,7 +54,7 @@ const identity = [
     "password",
     true,
   ),
-  field("mobile", "Mobile", "الموبايل"),
+  field("mobile", "Mobile", "الهاتف المحمول"),
   field("email", "Email", "البريد الإلكتروني"),
   ref("branchId", "Branch", "الفرع", "/branches/active", true),
 ];
@@ -158,7 +158,7 @@ export const configs: Record<string, EditorConfig> = {
       field(
         "gymAccessDays",
         "Gym validity · days",
-        "صلاحية الجيم بالأيام",
+        "صلاحية النادي بالأيام",
         "number",
       ),
       field("signupFee", "Signup fee · OMR", "رسوم التسجيل · ر.ع.", "decimal"),
@@ -168,7 +168,7 @@ export const configs: Record<string, EditorConfig> = {
   },
   classes: {
     en: "Class",
-    ar: "الكلاس",
+    ar: "الحصة",
     request: S.ClassRequest,
     update: S.ClassUpdateRequest,
     response: S.ClassResponse,
@@ -325,7 +325,7 @@ export const configs: Record<string, EditorConfig> = {
         ...field("type", "Type", "نوع الحضور", "select", true),
         options: ["GYM", "PT", "CLASS"],
       },
-      ref("classId", "Class", "الكلاس", "/classes"),
+      ref("classId", "Class", "الحصة", "/classes"),
     ],
   },
 };

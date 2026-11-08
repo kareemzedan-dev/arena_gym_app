@@ -18,6 +18,11 @@ export function dateLabel(value: string, ar = false) {
     timeZone: "Asia/Muscat",
   }).format(new Date(value.length === 10 ? `${value}T12:00:00Z` : value));
 }
+export function timeLabel(value: string, ar = false) {
+  return new Intl.DateTimeFormat(ar ? "ar-OM" : "en-GB", {
+    timeZone: "Asia/Muscat", hour: "2-digit", minute: "2-digit", hour12: false,
+  }).format(new Date(value));
+}
 export function money(value: string | undefined) {
   const [whole, fraction = ""] = (value || "0").split(".");
   return `${whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}.${fraction.padEnd(3, "0").slice(0, 3)}`;

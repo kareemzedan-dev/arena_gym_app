@@ -16,17 +16,26 @@ export const PtStatus = z.enum([
 export const PtAvailabilityRequest = z
     .object({
     coachId: id,
-    dayOfWeek: z.number().int().min(0).max(6),
+    dayOfWeek: z.number().int().min(0).max(6).optional(),
+    daysOfWeek: z.array(z.number().int().min(0).max(6))
+        .min(1).max(7)
+        .refine(v => new Set(v).size === v.length)
+        .optional(),
     startTime: localTime,
     endTime: localTime,
     slotMinutes: z.number().int().min(15).max(240).prefault(60),
     isActive: z.boolean().prefault(true),
 })
     .strict()
+    .refine(v => (v.dayOfWeek !== undefined) !== (v.daysOfWeek !== undefined), {
+    path: ["daysOfWeek"],
+    message: "Choose daysOfWeek or dayOfWeek",
+})
     .refine(times, {
     path: ["endTime"],
     message: "End time must follow start time",
 });
+export const PtAvailabilityUpdateRequest = PtAvailabilityRequest.refine(v => v.dayOfWeek !== undefined && v.daysOfWeek === undefined, { path: ["dayOfWeek"], message: "Editing requires one day" });
 export type PtAvailabilityRequest = z.infer<typeof PtAvailabilityRequest>;
 export const PtBookingRequest = z
     .object({
@@ -198,6 +207,7 @@ export const StockMovementListResponse = pageResponse(StockMovementResponse);
 // Form descriptions and API validation share one definition. Values are checked
 // by the API again; no arbitrary JSON or unrecognised fields are persisted.
 export const OperationKind = z.enum([
+    "banners",
     "class-bookings",
     "groups",
     "notices",
@@ -217,13 +227,21 @@ export type OperationKind = z.infer<typeof OperationKind>;
 export type OperationField = {
     key: string;
     label: string;
-    type: "text" | "textarea" | "date" | "time" | "number" | "exercise" | "member" | "members" | "coach" | "class" | "branch" | "select" | "boolean" | "email" | "url";
+    type: "image" | "text" | "textarea" | "date" | "time" | "number" | "exercise" | "member" | "members" | "coach" | "class" | "branch" | "select" | "boolean" | "email" | "url";
     required?: boolean;
     options?: string[];
     min?: number;
     max?: number;
 };
 export const operationFields: Record<OperationKind, OperationField[]> = {
+    banners: [
+        { key: "subtitle", label: "subtitle", type: "text" },
+        { key: "image", label: "photo", type: "image", required: true },
+        { key: "linkUrl", label: "linkUrl", type: "url" },
+        { key: "from", label: "from", type: "date", required: true },
+        { key: "to", label: "to", type: "date", required: true },
+        { key: "sortOrder", label: "sortOrder", type: "number", required: true },
+    ],
     "class-bookings": [
         { key: "classId", label: "class", type: "class", required: true },
         { key: "date", label: "date", type: "date", required: true },
@@ -410,49 +428,53 @@ export const operationFields: Record<OperationKind, OperationField[]> = {
 export function operationDataSchema(kind: OperationKind) {
     const fields: Record<string, z.ZodTypeAny> = {};
     for (const f of operationFields[kind]) {
-        let schema: z.ZodTypeAny = f.type === "date"
-            ? dateOnly
-            : f.type === "time"
-                ? localTime
-                : ["member", "coach", "class", "exercise"].includes(f.type)
-                    ? id
-                    : f.type === "members"
-                        ? z
-                            .array(id)
-                            .max(1000)
-                            .refine((v) => new Set(v).size === v.length)
-                        : f.type === "number"
+        let schema: z.ZodTypeAny = f.type === "image"
+            ? z.string().regex(/^\/files\/[0-9a-f-]{36}\.(jpg|png|webp)$/)
+            : f.type === "date"
+                ? dateOnly
+                : f.type === "time"
+                    ? localTime
+                    : ["member", "coach", "class", "exercise"].includes(f.type)
+                        ? id
+                        : f.type === "members"
                             ? z
-                                .number()
-                                .finite()
-                                .min(f.min ?? 0)
-                                .max(f.max ?? 1000000)
-                            : f.type === "boolean"
-                                ? z.boolean()
-                                : f.type === "select"
-                                    ? z.enum(f.options as [
-                                        string,
-                                        ...string[]
-                                    ])
-                                    : f.type === "email"
-                                        ? z.string().email().max(254)
-                                        : f.type === "url"
-                                            ? z
-                                                .string()
-                                                .url()
-                                                .max(2048)
-                                                .refine((v) => /^https:\/\//.test(v))
-                                            : z
-                                                .string()
-                                                .trim()
-                                                .min(1)
-                                                .max(f.type === "textarea" ? 16000 : 191);
+                                .array(id)
+                                .max(1000)
+                                .refine((v) => new Set(v).size === v.length)
+                            : f.type === "number"
+                                ? z
+                                    .number()
+                                    .finite()
+                                    .min(f.min ?? 0)
+                                    .max(f.max ?? 1000000)
+                                : f.type === "boolean"
+                                    ? z.boolean()
+                                    : f.type === "select"
+                                        ? z.enum(f.options as [
+                                            string,
+                                            ...string[]
+                                        ])
+                                        : f.type === "email"
+                                            ? z.string().email().max(254)
+                                            : f.type === "url"
+                                                ? z
+                                                    .string()
+                                                    .url()
+                                                    .max(2048)
+                                                    .refine((v) => (kind === "banners" ? /^https?:\/\// : /^https:\/\//).test(v))
+                                                : z
+                                                    .string()
+                                                    .trim()
+                                                    .min(1)
+                                                    .max(f.type === "textarea" ? 16000 : 191);
         if (f.type === "number" && f.key !== "rate" && f.key !== "weightKg")
             schema = (schema as z.ZodNumber).int();
         if (f.type === "members" && f.required)
             schema = (schema as z.ZodArray<typeof id>).refine((v) => v.length > 0);
         fields[f.key] = f.required ? schema : schema.nullable().optional();
     }
+    if (kind === "class-bookings")
+        fields.source = z.enum(["APP", "DASHBOARD"]).optional();
     return z
         .object(fields)
         .strict()
@@ -555,3 +577,32 @@ export const MemberImportResult = z.object({
         error: z.enum(["CONFLICT", "INVALID_REFERENCE", "FAILED"]).optional(),
     })),
 });
+export const CoachPtBookingsQuery = z.object({
+    from: dateOnly,
+    to: dateOnly,
+    coachId: z.coerce.number().pipe(id).optional(),
+    branchId: z.coerce.number().pipe(id).optional(),
+}).strict();
+export type CoachPtBookingsQuery = z.infer<typeof CoachPtBookingsQuery>;
+export const CoachPtBookingResponse = z.object({
+    id,
+    memberId: id,
+    memberName: z.string(),
+    coachId: id,
+    coachName: z.string(),
+    startsAt: timestamp,
+    endsAt: timestamp,
+    status: PtStatus,
+    notes: z.string().nullable(),
+});
+export type CoachPtBookingResponse = z.infer<typeof CoachPtBookingResponse>;
+export const CoachPtBookingListResponse = z.array(CoachPtBookingResponse);
+export const BannerResponse = z.object({
+    id,
+    title: z.string(),
+    subtitle: z.string().nullable(),
+    imageUrl: z.string().url(),
+    linkUrl: z.string().url().nullable(),
+});
+export type BannerResponse = z.infer<typeof BannerResponse>;
+export const BannerListResponse = z.array(BannerResponse);

@@ -131,20 +131,3 @@ export function FitnessArt({
     </View>
   );
 }
-
-export function ArenaMark() {
-  return (
-    <View
-      style={{
-        width: 46,
-        height: 46,
-        borderRadius: 16,
-        backgroundColor: "#203C36",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Icon name="barbell-outline" size={30} />
-    </View>
-  );
-}

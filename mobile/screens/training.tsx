@@ -36,7 +36,7 @@ function MemberTraining() {
   const q = useData("/me/workouts", AssignmentListResponse);
   return (
     <Screen
-      title={text("Built for you.", "مصمم ليك.")}
+      title={text("Built for you.", "مصمم لكِ.")}
       subtitle={text("YOUR TRAINING", "تمارينك")}
       onRefresh={() => void q.refetch()}
       refreshing={q.isRefetching}
@@ -44,7 +44,7 @@ function MemberTraining() {
       <Text muted>
         {text(
           "A clear plan. A stronger you. Let’s get to work.",
-          "خطة واضحة، ونسخة أقوى منك. يلا نبدأ.",
+          "خطة واضحة، ونسخة أقوى منك. لنبدأ.",
         )}
       </Text>
       <ListRow
@@ -86,10 +86,10 @@ function MemberTraining() {
         ))}
         {!q.data?.length && (
           <Empty
-            title={text("Your plan is on its way", "خطتك لسه بتتجهز")}
+            title={text("Your plan is on its way", "خطتك قيد الإعداد")}
             detail={text(
               "Your assigned workouts will appear here.",
-              "تمارينك هتظهر هنا بعد ما مدربك يضيفها.",
+              "ستظهر تمارينك هنا بعد أن تضيفها مدربتك.",
             )}
             icon="barbell-outline"
           />
@@ -130,7 +130,7 @@ export function Workout() {
           <>
             <Card style={{ backgroundColor: "#203B34" }}>
               <Text bold size={22}>
-                {text("One set at a time.", "مجموعة وراء مجموعة.")}
+                {text("One set at a time.", "مجموعة تلو الأخرى.")}
               </Text>
               <Text muted>
                 {text(
@@ -246,7 +246,7 @@ export function Nutrition() {
       <Text muted>
         {text(
           "Balanced meals, thoughtfully planned by your coach.",
-          "وجبات متوازنة، مدربك مجهزها ليك بعناية.",
+          "وجبات متوازنة أعدّتها مدربتك لكِ بعناية.",
         )}
       </Text>
       <DataState query={q}>
@@ -291,10 +291,10 @@ export function Nutrition() {
         ))}
         {!q.data?.length && (
           <Empty
-            title={text("Good things are being prepared", "خطتك بتتجهز")}
+            title={text("Good things are being prepared", "خطتك قيد الإعداد")}
             detail={text(
               "Your coach’s meal plan will appear here.",
-              "خطة التغذية هتظهر هنا لما مدربك يضيفها.",
+              "ستظهر خطة التغذية هنا بعد أن تضيفها مدربتك.",
             )}
             icon="restaurant-outline"
           />

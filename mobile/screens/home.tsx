@@ -1,5 +1,8 @@
 import React from "react";
-import { View, Pressable } from "react-native";
+import { View } from "react-native";
+import { useQueryClient } from "@tanstack/react-query";
+import { BannerCarousel } from "../components/banner-carousel";
+import { greetingName } from "../state/greeting";
 import { FitnessArt } from "../components/fitness-art";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -36,6 +39,8 @@ function MemberHome() {
   const { user } = useSession();
   const { text, ar } = usePrefs();
   const router = useRouter();
+  const client = useQueryClient();
+  const name = greetingName(user);
   const membership = useData("/me/membership", MembershipResponse);
   const workouts = useData("/me/workouts", AssignmentListResponse);
   const current = membership.data?.current[0];
@@ -45,26 +50,26 @@ function MemberHome() {
       onRefresh={() => {
         void membership.refetch();
         void workouts.refetch();
+        void client.invalidateQueries({ queryKey: ["api", "/me/banners"] });
       }}
       refreshing={membership.isRefetching}
     >
+      <BannerCarousel />
+      <Button
+        title={text("Check in with QR", "الدخول برمز QR")}
+        icon="qr-code-outline"
+        onPress={() => router.push("/(app)/checkin")}
+      />
       <Row style={{ justifyContent: "space-between" }}>
-        <View>
+        <View style={{ flex: 1 }}>
           <Text muted size={11}>
-            {text("A LITTLE STRONGER, EVERY DAY", "كل يوم أقوى شوية")}
+            {text("A LITTLE STRONGER, EVERY DAY", "أقوى قليلًا كل يوم")}
           </Text>
-          <Text size={28} bold>
-            {text("Hey", "أهلًا")}, {user?.username} <Text size={22}>✦</Text>
+          <Text size={28} bold numberOfLines={1}>
+            {text("Hey", "أهلًا")}
+            {name ? `${ar ? "،" : ","} ${name}` : ""} <Text size={22}>✦</Text>
           </Text>
         </View>
-        <Pressable
-          accessibilityLabel={text("Announcements", "الإعلانات")}
-          accessibilityRole="button"
-          onPress={() => router.push("/(app)/notices")}
-          style={{ padding: 13, borderRadius: 20, backgroundColor: c.card }}
-        >
-          <Icon name="notifications-outline" color={c.text} />
-        </Pressable>
       </Row>
       <View style={{ borderRadius: 28, overflow: "hidden" }}>
         <LinearGradient
@@ -72,14 +77,14 @@ function MemberHome() {
           style={{ padding: 22, gap: 12 }}
         >
           <FitnessArt icon="barbell-outline" size={200} />
-          <Badge>{text("YOUR DAILY MOMENTUM", "خطوتك النهارده")}</Badge>
+          <Badge>{text("YOUR DAILY MOMENTUM", "خطوتك اليوم")}</Badge>
           <Text size={30} bold style={{ lineHeight: 41 }}>
             {text("Make time\nfor stronger.", "خصصي وقت\nلنسختك الأقوى.")}
           </Text>
           <Button
             title={
               workout
-                ? text("View your workout", "شوفي تمرينك")
+                ? text("View your workout", "استعرضي تمرينك")
                 : text("Explore your training", "اكتشفي تمارينك")
             }
             onPress={() =>
@@ -130,7 +135,7 @@ function MemberHome() {
             )}
             detail={text(
               "Reception can help activate your membership.",
-              "الاستقبال يقدر يساعدك في تفعيل اشتراكك.",
+              "يمكن للاستقبال مساعدتك في تفعيل اشتراكك.",
             )}
           />
         )}
@@ -146,8 +151,8 @@ function MemberHome() {
       />
       <ListRow
         icon="calendar-outline"
-        title={text("Find your next class", "شوفي حصتك الجاية")}
-        subtitle={text("Your gym. Your community.", "جيمك ومجتمعك الرياضي.")}
+        title={text("Find your next class", "استعرضي حصتك القادمة")}
+        subtitle={text("Your gym. Your community.", "ناديك ومجتمعك الرياضي.")}
         onPress={() => router.push("/(app)/classes")}
       />
     </Screen>
@@ -176,10 +181,10 @@ function TeamHome() {
     >
       <Card style={{ backgroundColor: "#203B34" }}>
         <Text accent bold>
-          {text("WELCOME BACK", "أهلًا برجوعك")}
+          {text("WELCOME BACK", "مرحبًا بعودتك")}
         </Text>
         <Text size={30} bold>
-          {user?.username}
+          {greetingName(user) || text("Hey", "أهلًا")}
         </Text>
         <Text muted>
           {text(

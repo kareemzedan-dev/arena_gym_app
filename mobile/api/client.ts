@@ -26,7 +26,10 @@ export class ApiClient {
     private transport: typeof fetch = (input, init) => fetch(input, init),
   ) {}
   async restore() {
-    this.tokens = await this.store.read();
+    const generation = this.generation;
+    const tokens = await this.store.read();
+    if (generation !== this.generation) return false;
+    this.tokens = tokens;
     return !!this.tokens;
   }
   private save(tokens: TokenPair | null) {

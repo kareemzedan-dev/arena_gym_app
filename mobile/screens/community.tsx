@@ -49,7 +49,7 @@ export function Community({ kind }: { kind: "messages" | "notices" }) {
       back
       title={
         kind === "messages"
-          ? text("Stay connected.", "خليك على تواصل.")
+          ? text("Stay connected.", "ابقي على تواصل.")
           : text("Around your arena.", "أخبار أرينا.")
       }
       subtitle={text(
@@ -113,7 +113,7 @@ export function Community({ kind }: { kind: "messages" | "notices" }) {
           </Card>
         ))}
         {!q.data?.items.length && (
-          <Empty title={text("You’re all caught up", "أنت متابع كل جديد")} />
+          <Empty title={text("You’re all caught up", "اطّلعتِ على جميع المستجدات")} />
         )}
         <Row>
           {page > 1 && (

@@ -64,14 +64,20 @@ test("onboarding is usable in Arabic, English and compact mobile sizes", async (
   ).toBeVisible();
   await shot(page, "01-onboarding-ar");
   await noOverflow(page);
-  await page.setViewportSize({ width: 360, height: 740 });
-  await page.getByRole("button", { name: "يلا نكمل", exact: true }).click();
-  await page.getByRole("button", { name: "يلا نكمل", exact: true }).click();
+  await page.setViewportSize({ width: 360, height: 640 });
+  await page
+    .getByRole("button", { name: "التالي", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "التالي", exact: true })
+    .click();
   await page.getByRole("button", { name: "ابدئي رحلتك", exact: true }).click();
-  await expect(page.getByText("سعداء برجوعك.", { exact: true })).toBeVisible();
+  await expect(page.getByText("مرحبًا بعودتك", { exact: true })).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
   await shot(page, "02-login-ar");
   await noOverflow(page);
-  expect(await page.locator("img").count()).toBe(0);
+  await expect(page.getByRole("img", { name: "Arena Gym" })).toBeVisible();
+  await expect(page.getByTestId("fitness-art")).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 test("password visibility stays inside its field in both directions without changing the password", async ({
@@ -132,31 +138,63 @@ test("password visibility stays inside its field in both directions without chan
 });
 
 for (const motion of ["reduce", "no-preference"] as const) {
-  test(`large icon intro settles without looping with motion=${motion}`, async ({
+  test(`brand intro settles without looping with motion=${motion}`, async ({
     page,
   }) => {
     const errors = await connect(page);
     await page.emulateMedia({ reducedMotion: motion });
     await page.goto("/");
-    const art = page.getByTestId("fitness-art");
+    const art = page.getByTestId("onboarding-brand");
     await expect(art).toBeVisible();
-    expect((await art.boundingBox())!.width).toBeGreaterThanOrEqual(300);
+    const logo = page.getByRole("img", { name: "Arena Gym" });
+    const logoBox = (await logo.boundingBox())!;
+    expect(logoBox.width / page.viewportSize()!.width).toBeCloseTo(0.52, 2);
+    expect(logoBox.width).toBe(logoBox.height);
     await expect
-      .poll(() =>
-        art.evaluate((el) => getComputedStyle(el.firstElementChild!).opacity),
-      )
+      .poll(() => art.evaluate((el) => getComputedStyle(el).opacity))
       .toBe("1");
     const settled = await art.screenshot();
     // Deliberate stability interval: catch accidental perpetual animation.
     await page.waitForTimeout(350);
     expect(await art.screenshot()).toEqual(settled);
-    expect(await page.locator("img").count()).toBe(0);
+    await expect(page.getByTestId("fitness-art")).toHaveCount(0);
     await page
-      .getByRole("button", { name: "Let’s keep moving", exact: true })
+      .getByRole("button", { name: "Next", exact: true })
       .click();
     await expect(
       page.getByText("A plan. A coach.\nYour pace.", { exact: true }),
     ).toBeVisible();
+    // Swipe back and forward in both reading directions.
+    for (const ar of [false, true]) {
+      if (ar)
+        await page
+          .getByRole("button", { name: "العربية", exact: true })
+          .click();
+      const box = (await art.boundingBox())!;
+      const swipe = async (forward: boolean) => {
+        const direction = (ar ? 1 : -1) * (forward ? 1 : -1);
+        const x = box.x + box.width / 2;
+        const y = box.y + box.height / 2;
+        await page.mouse.move(x - direction * 60, y);
+        await page.mouse.down();
+        await page.mouse.move(x + direction * 60, y, { steps: 8 });
+        await page.mouse.up();
+      };
+      await swipe(false);
+      await expect(
+        page.getByText(
+          ar ? "بدايتك الجديدة.\nأقوى." : "Your next chapter.\nStronger.",
+          { exact: true },
+        ),
+      ).toBeVisible();
+      await swipe(true);
+      await expect(
+        page.getByText(
+          ar ? "خطتك. مدربتك.\nعلى إيقاعك." : "A plan. A coach.\nYour pace.",
+          { exact: true },
+        ),
+      ).toBeVisible();
+    }
     await noOverflow(page);
     expect(errors).toEqual([]);
   });
@@ -239,7 +277,7 @@ test("member uses live membership, workouts, meals, progress, classes, invoices 
   await tab(page, "حسابي");
   await page.getByRole("button", { name: "تسجيل الخروج", exact: true }).click();
   await page.getByRole("button", { name: "تسجيل الخروج", exact: true }).click();
-  await expect(page.getByText("سعداء برجوعك.", { exact: true })).toBeVisible();
+  await expect(page.getByText("مرحبًا بعودتك", { exact: true })).toBeVisible();
   expect(errors).toEqual([]);
 });
 test("coach sees assigned clients, adds measurements and opens real schedule", async ({

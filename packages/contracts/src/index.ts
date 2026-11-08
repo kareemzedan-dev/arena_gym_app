@@ -29,6 +29,7 @@ export const Me = z
     .object({
     id: z.number().int().positive(),
     username: z.string(),
+    fullName: z.string().nullable(),
     mobile: z.string().nullable(),
     email: z.string().nullable(),
     role: Role,
