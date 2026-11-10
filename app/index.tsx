@@ -14,7 +14,7 @@ import Animated, { FadeIn, useReducedMotion } from "react-native-reanimated";
 import { Button, Text, Row, Screen, Loading } from "../mobile/components/ui";
 import { usePrefs } from "../mobile/state/preferences";
 import { useSession } from "../mobile/state/session";
-import { colors as c } from "../mobile/theme/tokens";
+import { useTheme } from "../mobile/theme/use-theme";
 const slides = [
   {
     eyebrow: ["YOUR SPACE. YOUR STRENGTH.", "أرينا للسيدات"],
@@ -45,6 +45,7 @@ const slides = [
   },
 ] as const;
 export default function Onboarding() {
+  const c = useTheme();
   const {
     introDone,
     finishIntro,

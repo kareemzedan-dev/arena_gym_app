@@ -1,6 +1,6 @@
 {
   "repository": "Wingital-Company/arena-gym",
-  "commit": "88af26a9fb59a40f36aac471d8ca0e936b2eb8bf",
+  "commit": "e899bb19f2cd5fe95eea6f375a4add9f3d6aefda",
   "path": "packages/shared/src",
   "adapter": "Zod 4: preserve partial omission, pre-parse defaults, explicit string record keys, inline refinements",
   "sourceSha256": {
@@ -12,10 +12,10 @@
     "index.ts": "8f9d7c5c2f21dfd0b7f7e17504c016d69e4c6bdd79a5852e269e534013447fa9",
     "invoices.ts": "e47ec95928921f933ee239c2c2decd2f852c1ec4959f9dbf98aa4580e6abfa9e",
     "members.ts": "19de8118d6f7c0de6c734b627df625b8b48429bfc2d2f494c6c9668be7d87bb7",
-    "operations.ts": "146d470cf867039d48471d366242ecc054918411f2153f419b55839a00c58953",
+    "operations.ts": "440aee3c57540e3f2a6ab5476ca9141ee8fa41e9ad93b635a4d6e8067a9caa18",
     "payments.ts": "4f77bff55feb5d71f91bdbabed6c70dfba2ddc6cc4b9126bef3c9b2e4f7f7be2",
     "plan-categories.ts": "c28ec29a1d006b6c97f549abc6073e4d1091c4e20d022c4496381851f0be99f5",
-    "plans.ts": "4fd09dfe82a14841e9d6f62029ac22d9a34d7a43d6b4aa49dce8998b0430c76c",
+    "plans.ts": "f54f4b22c7b972c24cfd670ec885b04fffd0165b7f5a215e6a03d53c96d76290",
     "pos.ts": "0af39984065fdd1e062924397119baf7d9795b3d108b24f797dfcb98f6321065",
     "products.ts": "760ca6701ec888bbf827063ca86304d3efa6aad55f4507b748176481513d23ac",
     "reports.ts": "b0e11a4e6a15e3ed474330d7cc9f1f2c4ad3b8162c4c15a91e667b7c23c94ba6",
@@ -23,6 +23,6 @@
     "self-service.ts": "94b5707dd12eb000915aec9ddf4f71c3af000076438637022362e14ead68fc4c",
     "staff.ts": "8ccb71bcc19540242e7c150e3c94ba6260a7e1d098d3e28a7e6c663a00a71b3f",
     "subscriptions.ts": "e4a200682af8a12bbbb476e6293e3770c77ff65b51462d158933dfc2b32b5f73",
-    "training.ts": "a90c4d9b5f5ceda59a7e09e24a4ccf3ded84ff4ff19e1dc87f58657d0addd502"
+    "training.ts": "98db3b039413a868d02682ead77195dfb96b8c827ebd8973eee06c7895299948"
   }
 }

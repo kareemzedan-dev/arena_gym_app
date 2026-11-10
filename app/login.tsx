@@ -20,8 +20,9 @@ import {
   Row,
   Icon,
 } from "../mobile/components/ui";
-import { colors as c } from "../mobile/theme/tokens";
+import { useTheme } from "../mobile/theme/use-theme";
 export default function Login() {
+  const c = useTheme();
   const { text, ar, toggleLanguage } = usePrefs();
   const { height } = useWindowDimensions();
   const compact = height < 750;

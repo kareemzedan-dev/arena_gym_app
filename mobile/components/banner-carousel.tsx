@@ -1,17 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AppState, Linking, Pressable, ScrollView, View } from "react-native";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import { useReducedMotion } from "react-native-reanimated";
-import { BannerListResponse } from "@arena/shared";
 import { useData } from "./data";
-import { Text } from "./ui";
+import { Icon } from "./ui";
 import { usePrefs } from "../state/preferences";
-import { bannersForDisplay } from "../api/banners";
-import { colors as c } from "../theme/tokens";
+import {
+  bannersForDisplay,
+  MobileBannerListResponse,
+  bannerDuration,
+} from "../api/banners";
+import { useTheme } from "../theme/use-theme";
 
 export function BannerCarousel() {
-  const q = useData("/me/banners", BannerListResponse);
+  const c = useTheme();
+  const q = useData("/me/banners", MobileBannerListResponse);
   const { text, ar } = usePrefs();
   const reduced = useReducedMotion();
   const scroll = useRef<React.ElementRef<typeof ScrollView>>(null);
@@ -33,6 +36,7 @@ export function BannerCarousel() {
       animated: false,
     });
   }, [width, banners.length, ar, q.error]);
+  const duration = bannerDuration(banners[index]);
   useEffect(() => {
     if (
       reduced ||
@@ -43,19 +47,30 @@ export function BannerCarousel() {
       q.error
     )
       return;
-    const timer = setInterval(() => {
+    const timer = setTimeout(() => {
       const next = (index + 1) % banners.length;
       scroll.current?.scrollTo({
         x: (ar ? banners.length - 1 - next : next) * width,
         animated: true,
       });
       setIndex(next);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [reduced, touching, active, banners.length, width, index, q.error, ar]);
+    }, duration * 1000);
+    return () => clearTimeout(timer);
+  }, [
+    reduced,
+    touching,
+    active,
+    banners.length,
+    width,
+    index,
+    q.error,
+    ar,
+    duration,
+  ]);
   if (q.error || (!q.isPending && !banners.length)) return null;
   return (
     <View
+      testID="banner-carousel"
       onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
       style={{ gap: 10 }}
     >
@@ -124,55 +139,35 @@ export function BannerCarousel() {
                     }}
                     accessibilityLabel={banner.title}
                   />
-                  <LinearGradient
-                    colors={["transparent", "rgba(0,0,0,0.9)"]}
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      justifyContent: "flex-end",
-                      padding: 12,
-                      gap: 2,
-                    }}
-                  >
-                    <Text
-                      bold
-                      size={16}
-                      numberOfLines={1}
-                      style={{ color: "white" }}
+                  {!!link && (
+                    <Pressable
+                      accessibilityRole="link"
+                      accessibilityLabel={text(
+                        "Open banner link",
+                        "فتح رابط الإعلان",
+                      )}
+                      onPress={() => void Linking.openURL(link).catch(() => {})}
+                      style={{
+                        position: "absolute",
+                        bottom: 10,
+                        ...(ar ? { left: 10 } : { right: 10 }),
+                        width: 44,
+                        height: 44,
+                        borderRadius: 22,
+                        backgroundColor: c.card,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderWidth: 1,
+                        borderColor: c.line,
+                      }}
                     >
-                      {banner.title}
-                    </Text>
-                    {!!banner.subtitle && (
-                      <Text
-                        size={12}
-                        numberOfLines={1}
-                        style={{ color: "white" }}
-                      >
-                        {banner.subtitle}
-                      </Text>
-                    )}
-                    {!!link && (
-                      <Pressable
-                        accessibilityRole="link"
-                        accessibilityLabel={text("Learn more", "اعرفي المزيد")}
-                        onPress={() =>
-                          void Linking.openURL(link).catch(() => {})
-                        }
-                        style={{
-                          alignSelf: ar ? "flex-end" : "flex-start",
-                          backgroundColor: c.accent,
-                          borderRadius: 24,
-                          paddingHorizontal: 14,
-                          minHeight: 44,
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Text bold size={12} style={{ color: c.ink }}>
-                          {text("Learn more", "اعرفي المزيد")}
-                        </Text>
-                      </Pressable>
-                    )}
-                  </LinearGradient>
+                      <Icon
+                        name={ar ? "arrow-back" : "arrow-forward"}
+                        color={c.accent}
+                        size={20}
+                      />
+                    </Pressable>
+                  )}
                 </View>
               );
             })}

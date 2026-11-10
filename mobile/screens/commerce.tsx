@@ -40,8 +40,9 @@ import {
   Badge,
 } from "../components/ui";
 import { Picker } from "../components/picker";
-import { colors as c } from "../theme/tokens";
+import { useTheme } from "../theme/use-theme";
 export function Pos() {
+  const c = useTheme();
   const { text } = usePrefs();
   const router = useRouter();
   const [member, setMember] = useState<number | null>(null);
@@ -559,6 +560,7 @@ export function Invoice() {
   );
 }
 export function InvoiceEdit() {
+  const c = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { text } = usePrefs();
   const router = useRouter();

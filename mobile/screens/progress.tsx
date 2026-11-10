@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import Svg, { Path, Circle, Line } from "react-native-svg";
+import { MeasurementChart } from "../components/measurement-chart";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { MeasurementHistoryResponse, measurementFields } from "@arena/shared";
 import { usePrefs } from "../state/preferences";
@@ -19,7 +19,6 @@ import {
   Badge,
   Button,
 } from "../components/ui";
-import { colors as c } from "../theme/tokens";
 import { dateLabel, canManage, canFinance, canTrain } from "../api/format";
 export const measurementNames: Record<string, [string, string]> = {
   weight: ["Weight", "الوزن"],
@@ -61,13 +60,6 @@ export function Measurements() {
     .filter((r) => r[metric] !== null)
     .slice(0, 10)
     .reverse();
-  const values = points.map((r) => Number(r[metric]));
-  const low = Math.min(...values) - 1,
-    high = Math.max(...values) + 1;
-  const coords = values.map((v, i) => [
-    20 + (i / Math.max(1, values.length - 1)) * 260,
-    140 - ((v - low) / (high - low)) * 115,
-  ]);
   const unit =
     metric === "weight" || metric === "muscleMass"
       ? "kg"
@@ -108,7 +100,7 @@ export function Measurements() {
               <Text muted>{text(...measurementNames[metric])}</Text>
               <Row>
                 <Stat
-                  value={recent[metric] || "—"}
+                  value={recent[metric] ?? "—"}
                   label={dateLabel(recent.measuredOn, ar)}
                   unit={unit}
                 />
@@ -124,46 +116,14 @@ export function Measurements() {
                   </View>
                 )}
               </Row>
-              {points.length > 1 ? (
-                <>
-                  <Svg
-                    viewBox="0 0 300 170"
-                    style={{ width: "100%", height: 180 }}
-                    accessibilityLabel={text(
-                      "Measurement history trend",
-                      "تطور القياسات",
-                    )}
-                  >
-                    <Line x1={20} x2={280} y1={145} y2={145} stroke={c.line} />
-                    <Path
-                      d={coords
-                        .map(([x, y], i) => `${i ? "L" : "M"}${x},${y}`)
-                        .join(" ")}
-                      stroke={c.accent}
-                      strokeWidth={3}
-                      fill="none"
-                    />
-                    {coords.map(([x, y], i) => (
-                      <Circle key={i} cx={x} cy={y} r={4} fill={c.lime} />
-                    ))}
-                  </Svg>
-                  <Row style={{ justifyContent: "space-between" }}>
-                    <Text size={10} muted>
-                      {dateLabel(points[0].measuredOn, ar)}
-                    </Text>
-                    <Text size={10} muted>
-                      {dateLabel(points[points.length - 1].measuredOn, ar)}
-                    </Text>
-                  </Row>
-                </>
-              ) : (
-                <Text muted size={12}>
-                  {text(
-                    "Your trend appears after the next measurement.",
-                    "سيظهر الرسم بعد إضافة القياس القادم.",
-                  )}
-                </Text>
-              )}
+              <MeasurementChart
+                key={metric}
+                unit={unit}
+                points={points.map((p) => ({
+                  date: p.measuredOn,
+                  value: Number(p[metric]),
+                }))}
+              />
             </Card>
             <Section title={text("Your history", "سجل قياساتك")} />
             {rows.map((r) => (

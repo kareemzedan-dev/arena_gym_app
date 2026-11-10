@@ -402,6 +402,31 @@
     }
   },
   {
+    "schema": "PtAvailabilityUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "PtAvailabilityUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "PtAvailabilityUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
     "schema": "PlanRequest",
     "input": {
       "name": "Gym",
@@ -413,7 +438,6 @@
     "expected": {
       "success": true,
       "data": {
-        "signupFee": "0",
         "name": "Gym",
         "categoryId": 1,
         "price": "25",
@@ -437,7 +461,6 @@
     "expected": {
       "success": true,
       "data": {
-        "signupFee": "0",
         "name": "PT",
         "categoryId": 1,
         "price": "0.001",

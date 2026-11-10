@@ -25,7 +25,7 @@ import {
   Badge,
 } from "../components/ui";
 import { dateLabel, canManage, safeHttpUrl } from "../api/format";
-import { colors as c } from "../theme/tokens";
+import { useTheme } from "../theme/use-theme";
 export default function Training() {
   const { user } = useSession();
   return user?.role === "MEMBER" ? <MemberTraining /> : <Clients />;
@@ -99,6 +99,7 @@ function MemberTraining() {
   );
 }
 export function Workout() {
+  const c = useTheme();
   const { id, memberId } = useLocalSearchParams<{
     id: string;
     memberId?: string;
@@ -128,7 +129,7 @@ export function Workout() {
       <DataState query={q}>
         {a && (
           <>
-            <Card style={{ backgroundColor: "#203B34" }}>
+            <Card style={{ backgroundColor: c.highlight }}>
               <Text bold size={22}>
                 {text("One set at a time.", "مجموعة تلو الأخرى.")}
               </Text>
@@ -201,12 +202,14 @@ export function Workout() {
                         {text("reps", "تكرارات")}
                       </Text>
                     </Text>
-                    <Text size={18} bold>
-                      {item.weightKg ?? "—"}{" "}
-                      <Text size={12} muted>
-                        kg
+                    {Number(item.weightKg) > 0 && (
+                      <Text testID="exercise-weight" size={18} bold>
+                        {item.weightKg}{" "}
+                        <Text size={12} muted>
+                          kg
+                        </Text>
                       </Text>
-                    </Text>
+                    )}
                   </Row>
                   {item.exercise.videoUrl &&
                     safeHttpUrl(item.exercise.videoUrl) && (

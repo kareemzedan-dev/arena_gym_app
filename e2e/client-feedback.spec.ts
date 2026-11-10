@@ -160,7 +160,8 @@ for (const ar of [false, true]) {
   }) => {
     const { errors } = await setup(page, "MEMBER", ar);
     const greeting = page.getByText(/(?:Hey,|أهلًا،) مريم/).first();
-    const banner = page.getByText("Welcome banner", { exact: true });
+    const banner = page.getByTestId("banner-carousel");
+    const membership = page.getByTestId("home-memberships");
     const qr = page.getByRole("button", {
       name: ar ? "الدخول برمز QR" : "Check in with QR",
       exact: true,
@@ -169,12 +170,12 @@ for (const ar of [false, true]) {
       exact: true,
     });
     const boxes = await Promise.all(
-      [greeting, banner, qr, hero].map((l) => l.boundingBox()),
+      [greeting, banner, membership, qr, hero].map((l) => l.boundingBox()),
     );
     for (let i = 1; i < boxes.length; i++)
       expect(boxes[i]!.y).toBeGreaterThan(boxes[i - 1]!.y);
-    expect(boxes[2]!.x).toBe(16);
-    expect(boxes[2]!.width).toBe(328);
+    expect(boxes[3]!.x).toBe(16);
+    expect(boxes[3]!.width).toBe(328);
     await expect(page.getByTestId("fitness-art")).toHaveCount(0);
     expect(
       await greeting.evaluate((el) => getComputedStyle(el).textAlign),

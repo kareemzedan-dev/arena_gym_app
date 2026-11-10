@@ -15,11 +15,13 @@ import {
   Field,
   Failure,
   Badge,
+  Chips,
 } from "../components/ui";
 import { useSave } from "../components/data";
-import { colors as c } from "../theme/tokens";
+import { useTheme } from "../theme/use-theme";
 export default function Account() {
-  const { text, toggleLanguage, ar } = usePrefs();
+  const c = useTheme();
+  const { text, toggleLanguage, ar, theme, setTheme } = usePrefs();
   const { user, logout } = useSession();
   const router = useRouter();
   const [confirm, setConfirm] = useState(false);
@@ -45,7 +47,7 @@ export default function Account() {
               width: 64,
               height: 64,
               borderRadius: 24,
-              backgroundColor: c.accent,
+              backgroundColor: c.primary,
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -74,6 +76,18 @@ export default function Account() {
           onPress={() => router.push(`/(app)/${path}` as never)}
         />
       ))}
+      <Card>
+        <Text bold>{text("Appearance", "المظهر")}</Text>
+        <Chips
+          value={theme}
+          onChange={(value) => setTheme(value as typeof theme)}
+          options={[
+            { value: "system", label: text("System", "النظام") },
+            { value: "light", label: text("Light", "فاتح") },
+            { value: "dark", label: text("Dark", "داكن") },
+          ]}
+        />
+      </Card>
       <ListRow
         title={text("Language", "اللغة")}
         subtitle={ar ? "العربية" : "English"}

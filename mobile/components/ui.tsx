@@ -26,7 +26,8 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import { colors as c } from "../theme/tokens";
+import type { Colors } from "../theme/tokens";
+import { useTheme } from "../theme/use-theme";
 import { usePrefs } from "../state/preferences";
 import { ApiError } from "../api/client";
 export function Text({
@@ -42,6 +43,7 @@ export function Text({
   size?: number;
   bold?: boolean;
 }) {
+  const c = useTheme();
   const { ar } = usePrefs();
   return (
     <RNText
@@ -82,17 +84,18 @@ export function Row({
 }
 export function Icon({
   name,
-  color = c.accent,
+  color,
   size = 22,
 }: {
   name: React.ComponentProps<typeof Ionicons>["name"];
   color?: string;
   size?: number;
 }) {
+  const c = useTheme();
   return (
     <Ionicons
       name={name}
-      color={color}
+      color={color ?? c.accent}
       size={size}
       accessible={false}
       aria-hidden={true}
@@ -114,6 +117,8 @@ export function Button({
   disabled?: boolean;
   icon?: React.ComponentProps<typeof Icon>["name"];
 }) {
+  const c = useTheme();
+  const s = styles(c);
   const reduced = useReducedMotion();
   const scale = useSharedValue(1);
   const animation = useAnimatedStyle(() => ({
@@ -172,6 +177,8 @@ export function Card({
   style,
   delay = 0,
 }: React.PropsWithChildren<{ style?: StyleProp<ViewStyle>; delay?: number }>) {
+  const c = useTheme();
+  const s = styles(c);
   const reduced = useReducedMotion();
   return (
     <Animated.View
@@ -200,6 +207,8 @@ export function Screen({
   onRefresh?: () => void;
   compact?: boolean;
 }>) {
+  const c = useTheme();
+  const s = styles(c);
   const router = useRouter();
   const { text, ar } = usePrefs();
   return (
@@ -270,6 +279,8 @@ export function Screen({
   );
 }
 export function Field({ label, ...props }: TextInputProps & { label: string }) {
+  const c = useTheme();
+  const s = styles(c);
   const { ar, text } = usePrefs();
   const [revealed, setRevealed] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -283,7 +294,7 @@ export function Field({ label, ...props }: TextInputProps & { label: string }) {
         <TextInput
           accessibilityLabel={label}
           maxLength={4096}
-          placeholderTextColor="#7B8F85"
+          placeholderTextColor={c.placeholder}
           selectionColor={c.accent}
           {...props}
           onFocus={(event) => {
@@ -379,10 +390,11 @@ export function Badge({
   children,
   good = true,
 }: React.PropsWithChildren<{ good?: boolean }>) {
+  const c = useTheme();
   return (
     <View
       style={{
-        backgroundColor: good ? "#254638" : "#4A332D",
+        backgroundColor: good ? c.successBg : c.dangerBg,
         alignSelf: "flex-start",
         paddingHorizontal: 11,
         paddingVertical: 4,
@@ -433,6 +445,8 @@ export function Empty({
   detail?: string;
   icon?: React.ComponentProps<typeof Icon>["name"];
 }) {
+  const c = useTheme();
+  const s = styles(c);
   return (
     <Card style={{ paddingVertical: 35, alignItems: "center" }}>
       <View style={s.iconButton}>
@@ -456,10 +470,11 @@ export function Failure({
   error: unknown;
   retry?: () => void;
 }) {
+  const c = useTheme();
   const { text } = usePrefs();
   const code = error instanceof ApiError ? error.status : 0;
   return (
-    <Card style={{ borderColor: "#69423D" }}>
+    <Card style={{ borderColor: c.dangerBorder }}>
       <Text style={{ color: c.red }} accessibilityRole="alert">
         {code === 401
           ? text("Please sign in again.", "سجّل الدخول مرة أخرى.")
@@ -499,6 +514,7 @@ export function Failure({
   );
 }
 export function Loading() {
+  const c = useTheme();
   const { text } = usePrefs();
   return (
     <View
@@ -524,6 +540,8 @@ export function ListRow({
   onPress?: () => void;
   trailing?: React.ReactNode;
 }) {
+  const c = useTheme();
+  const s = styles(c);
   const { ar } = usePrefs();
   return (
     <Pressable
@@ -571,6 +589,7 @@ export function Chips({
   value: string;
   onChange(v: string): void;
 }) {
+  const c = useTheme();
   return (
     <ScrollView
       horizontal
@@ -582,15 +601,16 @@ export function Chips({
           key={o.value}
           accessibilityRole="radio"
           accessibilityState={{ checked: value === o.value }}
+          aria-checked={value === o.value}
           onPress={() => onChange(o.value)}
           style={{
             minHeight: 46,
             justifyContent: "center",
             paddingHorizontal: 18,
             borderRadius: 30,
-            backgroundColor: value === o.value ? c.accent : c.card,
+            backgroundColor: value === o.value ? c.primary : c.card,
             borderWidth: 1,
-            borderColor: value === o.value ? c.accent : c.line,
+            borderColor: value === o.value ? c.primary : c.line,
           }}
         >
           <Text
@@ -605,55 +625,56 @@ export function Chips({
     </ScrollView>
   );
 }
-export const s = StyleSheet.create({
-  page: {
-    padding: 24,
-    paddingBottom: 44,
-    gap: 18,
-    width: "100%",
-    maxWidth: 760,
-    alignSelf: "center",
-  },
-  card: {
-    backgroundColor: c.card,
-    borderRadius: 24,
-    padding: 22,
-    gap: 16,
-    borderWidth: 1,
-    borderColor: c.line,
-  },
-  button: {
-    backgroundColor: c.accent,
-    borderRadius: 18,
-    minHeight: 56,
-    padding: 14,
-    justifyContent: "center",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: c.line,
-    backgroundColor: c.card,
-    color: c.text,
-    borderRadius: 16,
-    minHeight: 56,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontFamily: "Cairo",
-    fontSize: 14,
-  },
-  iconButton: {
-    width: 46,
-    height: 46,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: c.raised,
-  },
-  listRow: {
-    backgroundColor: c.card,
-    borderRadius: 20,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: c.line,
-  },
-});
+const styles = (c: Colors) =>
+  StyleSheet.create({
+    page: {
+      padding: 24,
+      paddingBottom: 44,
+      gap: 18,
+      width: "100%",
+      maxWidth: 760,
+      alignSelf: "center",
+    },
+    card: {
+      backgroundColor: c.card,
+      borderRadius: 24,
+      padding: 22,
+      gap: 16,
+      borderWidth: 1,
+      borderColor: c.line,
+    },
+    button: {
+      backgroundColor: c.primary,
+      borderRadius: 18,
+      minHeight: 56,
+      padding: 14,
+      justifyContent: "center",
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: c.line,
+      backgroundColor: c.card,
+      color: c.text,
+      borderRadius: 16,
+      minHeight: 56,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      fontFamily: "Cairo",
+      fontSize: 14,
+    },
+    iconButton: {
+      width: 46,
+      height: 46,
+      borderRadius: 16,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: c.raised,
+    },
+    listRow: {
+      backgroundColor: c.card,
+      borderRadius: 20,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: c.line,
+    },
+  });

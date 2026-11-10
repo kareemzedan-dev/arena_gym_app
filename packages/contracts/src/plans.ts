@@ -7,7 +7,7 @@ export const PlanScope = z.enum(["GYM", "PT", "BUNDLE"]);
 export type PlanScope = z.infer<typeof PlanScope>;
 const fields = z
     .object({
-    signupFee: money.prefault("0"),
+    signupFee: money.optional(),
     ptValidityDays: z.number().int().min(1).max(3650).nullable().optional(),
     gymAccessDays: z.number().int().min(1).max(3650).nullable().optional(),
     defaultCoachId: id.nullable().optional(),

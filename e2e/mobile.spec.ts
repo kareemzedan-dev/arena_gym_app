@@ -65,12 +65,8 @@ test("onboarding is usable in Arabic, English and compact mobile sizes", async (
   await shot(page, "01-onboarding-ar");
   await noOverflow(page);
   await page.setViewportSize({ width: 360, height: 640 });
-  await page
-    .getByRole("button", { name: "التالي", exact: true })
-    .click();
-  await page
-    .getByRole("button", { name: "التالي", exact: true })
-    .click();
+  await page.getByRole("button", { name: "التالي", exact: true }).click();
+  await page.getByRole("button", { name: "التالي", exact: true }).click();
   await page.getByRole("button", { name: "ابدئي رحلتك", exact: true }).click();
   await expect(page.getByText("مرحبًا بعودتك", { exact: true })).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
@@ -158,9 +154,7 @@ for (const motion of ["reduce", "no-preference"] as const) {
     await page.waitForTimeout(350);
     expect(await art.screenshot()).toEqual(settled);
     await expect(page.getByTestId("fitness-art")).toHaveCount(0);
-    await page
-      .getByRole("button", { name: "Next", exact: true })
-      .click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
     await expect(
       page.getByText("A plan. A coach.\nYour pace.", { exact: true }),
     ).toBeVisible();
@@ -248,9 +242,12 @@ test("member uses live membership, workouts, meals, progress, classes, invoices 
   const day = new Date(fixtures().day + "T12:00:00Z");
   day.setUTCDate(day.getUTCDate() + 1);
   await page
+    .getByRole("button", { name: "Select Strength Club", exact: true })
+    .click();
+  await page
     .getByLabel("Book date · YYYY-MM-DD", { exact: true })
     .fill(day.toISOString().slice(0, 10));
-  await page.getByRole("button", { name: "Book a place", exact: true }).click();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page
     .getByRole("button", { name: "Confirm booking", exact: true })
     .click();
@@ -258,20 +255,20 @@ test("member uses live membership, workouts, meals, progress, classes, invoices 
     page.getByText("Booking confirmed.", { exact: true }),
   ).toBeVisible();
   await page
-    .getByRole("button", { name: "Cancel booking", exact: true })
+    .getByRole("button", { name: "Cancel", exact: true })
     .first()
     .click();
   await page
     .getByRole("button", { name: "Confirm cancellation", exact: true })
     .click();
-  await expect(page.getByText(/CANCELLED/)).toBeVisible();
+  await expect(page.getByText("Cancelled", { exact: true })).toBeVisible();
   await back(page);
   await page.getByRole("button", { name: "My invoices", exact: true }).click();
   await expect(page.getByText("PARTIAL", { exact: true })).toBeVisible();
   await back(page);
   await page.getByRole("button", { name: "Language", exact: true }).click();
   await tab(page, "اليوم");
-  await expect(page.getByText("خطوتك النهارده", { exact: true })).toBeVisible();
+  await expect(page.getByText("خطوتك اليوم", { exact: true })).toBeVisible();
   await shot(page, "03-home-ar");
   await noOverflow(page);
   await tab(page, "حسابي");

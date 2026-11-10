@@ -1,10 +1,11 @@
 import { Redirect, Stack } from "expo-router";
 import { useReducedMotion } from "react-native-reanimated";
-import { colors } from "../../mobile/theme/tokens";
+import { useTheme } from "../../mobile/theme/use-theme";
 import { useSession } from "../../mobile/state/session";
 import { Screen, Loading, Failure } from "../../mobile/components/ui";
 export const unstable_settings = { initialRouteName: "(tabs)" };
 export default function Layout() {
+  const c = useTheme();
   const reduced = useReducedMotion();
   const session = useSession();
   if (!session.ready)
@@ -24,7 +25,7 @@ export default function Layout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: colors.bg },
+        contentStyle: { backgroundColor: c.bg },
         animation: reduced ? "none" : "fade",
         animationDuration: 180,
       }}

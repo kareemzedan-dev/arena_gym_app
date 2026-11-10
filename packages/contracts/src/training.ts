@@ -71,6 +71,9 @@ export const ClassResponse = classFields
     .extend({
     id,
     capacity: z.number().int(),
+    bookedCount: z.number().int().nonnegative().optional(),
+    seatsLeft: z.number().int().nonnegative().optional(),
+    nextOccurrenceDate: dateOnly.nullable().optional(),
     planIds: z.array(id),
     weekDays: z.array(weekday),
     coachId: id.nullable(),

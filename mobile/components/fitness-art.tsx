@@ -9,7 +9,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { Icon } from "./ui";
-import { colors as c } from "../theme/tokens";
+import { useTheme } from "../theme/use-theme";
 
 /** Large vector artwork; one gentle entrance, never a continuous animation. */
 export function FitnessArt({
@@ -21,6 +21,7 @@ export function FitnessArt({
   size?: number;
   animate?: boolean;
 }) {
+  const c = useTheme();
   const reduced = useReducedMotion();
   const progress = useSharedValue(animate && !reduced ? 0 : 1);
   useEffect(() => {
@@ -77,7 +78,7 @@ export function FitnessArt({
               height: size * 0.94,
               borderRadius: size,
               borderWidth: 1,
-              borderColor: "#31564F",
+              borderColor: c.highlightBorder,
               alignItems: "center",
               justifyContent: "center",
             },
@@ -118,9 +119,9 @@ export function FitnessArt({
             width: size * 0.69,
             height: size * 0.69,
             borderRadius: size * 0.24,
-            backgroundColor: "#203C36",
+            backgroundColor: c.hero,
             borderWidth: 1,
-            borderColor: "#42665A",
+            borderColor: c.artBorder,
             alignItems: "center",
             justifyContent: "center",
           }}

@@ -1,3 +1,4 @@
+import { useTheme } from "../theme/use-theme";
 import React, { useEffect, useMemo, useState } from "react";
 import { AppState, View, useWindowDimensions } from "react-native";
 import Svg, { Rect } from "react-native-svg";
@@ -14,6 +15,7 @@ import { usePrefs } from "../state/preferences";
 import { greetingName } from "../state/greeting";
 
 export default function CheckIn() {
+  const c = useTheme();
   const { text } = usePrefs();
   const { user } = useSession();
   const client = useQueryClient();
@@ -118,7 +120,7 @@ export default function CheckIn() {
             style={{
               width: size,
               height: size,
-              backgroundColor: "white",
+              backgroundColor: c.qrPaper,
               alignSelf: "center",
               alignItems: "center",
               justifyContent: "center",
@@ -137,9 +139,9 @@ export default function CheckIn() {
                 )}
                 accessibilityRole="image"
               >
-                <Rect width={qr.size} height={qr.size} fill="white" />
+                <Rect width={qr.size} height={qr.size} fill={c.qrPaper} />
                 {qr.rects.map((rect, i) => (
-                  <Rect key={i} {...rect} fill="black" />
+                  <Rect key={i} {...rect} fill={c.qrInk} />
                 ))}
               </Svg>
             ) : (

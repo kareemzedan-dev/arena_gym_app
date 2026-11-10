@@ -241,14 +241,12 @@ export const operationFields: Record<OperationKind, OperationField[]> = {
         { key: "from", label: "from", type: "date", required: true },
         { key: "to", label: "to", type: "date", required: true },
         { key: "sortOrder", label: "sortOrder", type: "number", required: true },
+        { key: "durationSeconds", label: "durationSeconds", type: "number", min: 2, max: 60 },
     ],
     "class-bookings": [
         { key: "classId", label: "class", type: "class", required: true },
         { key: "date", label: "date", type: "date", required: true },
-        { key: "memberId", label: "member", type: "member" },
-        { key: "guestName", label: "guestName", type: "text" },
-        { key: "guestMobile", label: "mobile", type: "text" },
-        { key: "guestEmail", label: "email", type: "email" },
+        { key: "memberId", label: "member", type: "member", required: true },
         { key: "notes", label: "notes", type: "textarea" },
     ],
     groups: [
@@ -473,20 +471,18 @@ export function operationDataSchema(kind: OperationKind) {
             schema = (schema as z.ZodArray<typeof id>).refine((v) => v.length > 0);
         fields[f.key] = f.required ? schema : schema.nullable().optional();
     }
-    if (kind === "class-bookings")
+    if (kind === "banners")
+        fields.durationSeconds = z.number().int().min(2).max(60).prefault(5);
+    if (kind === "class-bookings") {
         fields.source = z.enum(["APP", "DASHBOARD"]).optional();
+        // Old clients can echo legacy metadata while editing a member booking.
+        for (const key of ["guestName", "guestMobile", "guestEmail"])
+            fields[key] = z.unknown().transform(() => undefined).optional();
+    }
     return z
         .object(fields)
         .strict()
         .superRefine((v, ctx) => {
-        if (kind === "class-bookings" &&
-            !v.memberId &&
-            (!v.guestName || !v.guestMobile))
-            ctx.addIssue({
-                code: "custom",
-                path: ["guestName"],
-                message: "Choose a member or enter guest name and mobile",
-            });
         if (v.from && v.to && v.to < v.from)
             ctx.addIssue({
                 code: "custom",
@@ -503,7 +499,7 @@ export function operationDataSchema(kind: OperationKind) {
 }
 export const OperationRequest = z
     .object({
-    title: name,
+    title: z.string().trim().max(191).prefault(""),
     status: z
         .enum([
         "ACTIVE",
@@ -599,6 +595,7 @@ export type CoachPtBookingResponse = z.infer<typeof CoachPtBookingResponse>;
 export const CoachPtBookingListResponse = z.array(CoachPtBookingResponse);
 export const BannerResponse = z.object({
     id,
+    durationSeconds: z.number().int().min(2).max(60).prefault(5),
     title: z.string(),
     subtitle: z.string().nullable(),
     imageUrl: z.string().url(),

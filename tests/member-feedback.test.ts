@@ -220,7 +220,9 @@ test("banner contracts accept absolute URLs; display filters image and link sche
     imageUrl: "https://cdn.example.com/banner.jpg",
     linkUrl: null,
   };
-  assert.deepEqual(BannerListResponse.parse([banner]), [banner]);
+  assert.deepEqual(BannerListResponse.parse([banner]), [
+    { ...banner, durationSeconds: 5 },
+  ]);
   assert.deepEqual(BannerListResponse.parse([]), []);
   assert.equal(
     BannerResponse.safeParse({
@@ -243,14 +245,18 @@ test("banner contracts accept absolute URLs; display filters image and link sche
   }
   for (const linkUrl of ["javascript:alert(1)", "mailto:a@example.com"]) {
     const parsed = BannerResponse.parse({ ...banner, linkUrl });
-    assert.deepEqual(bannersForDisplay([parsed]), [banner]);
+    assert.deepEqual(bannersForDisplay([parsed]), [
+      { ...banner, durationSeconds: 5 },
+    ]);
   }
   assert.equal(
     BannerResponse.safeParse({ ...banner, linkUrl: "/offer" }).success,
     false,
   );
   const linked = { ...banner, linkUrl: "http://example.com/offer" };
-  assert.deepEqual(bannersForDisplay([BannerResponse.parse(linked)]), [linked]);
+  assert.deepEqual(bannersForDisplay([BannerResponse.parse(linked)]), [
+    { ...linked, durationSeconds: 5 },
+  ]);
   assert.equal(BannerResponse.safeParse({ ...banner, id: "1" }).success, false);
   assert.equal(
     BannerListResponse.safeParse({ items: [banner] }).success,

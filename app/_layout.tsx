@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Platform } from "react-native";
+import * as SystemUI from "expo-system-ui";
 import { useReducedMotion } from "react-native-reanimated";
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
@@ -9,9 +11,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SessionProvider, useSession } from "../mobile/state/session";
 import { Preferences, usePrefs } from "../mobile/state/preferences";
 import { Failure, Loading, Screen } from "../mobile/components/ui";
-import { colors } from "../mobile/theme/tokens";
+import { useTheme } from "../mobile/theme/use-theme";
 export { ErrorBoundary } from "expo-router";
 function Navigator() {
+  const c = useTheme();
   const reduced = useReducedMotion();
   const session = useSession();
   const prefs = usePrefs();
@@ -31,7 +34,7 @@ function Navigator() {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: colors.bg },
+        contentStyle: { backgroundColor: c.bg },
         animation: reduced ? "none" : "fade",
         animationDuration: 180,
       }}
@@ -48,28 +51,41 @@ function Navigator() {
     </Stack>
   );
 }
-export default function Root() {
+function ThemedRoot() {
+  const c = useTheme();
+  const { scheme } = usePrefs();
+  useEffect(() => {
+    void SystemUI.setBackgroundColorAsync(c.bg).catch(() => {});
+    if (Platform.OS === "web")
+      document.documentElement.style.colorScheme = scheme;
+  }, [c.bg, scheme]);
   const [loaded, error] = useFonts({
     ...Ionicons.font,
     Cairo: require("../assets/Fonts/Cairo-Regular.ttf"),
     CairoBold: require("../assets/Fonts/Cairo-Bold.ttf"),
   });
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: c.bg }}>
       <SafeAreaProvider>
-        <Preferences>
-          <StatusBar style="light" />
-          <SessionProvider>
-            {loaded || error ? (
-              <Navigator />
-            ) : (
-              <Screen>
-                <Loading />
-              </Screen>
-            )}
-          </SessionProvider>
-        </Preferences>
+        <StatusBar style={scheme === "dark" ? "light" : "dark"} />
+        <SessionProvider>
+          {loaded || error ? (
+            <Navigator />
+          ) : (
+            <Screen>
+              <Loading />
+            </Screen>
+          )}
+        </SessionProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
+  );
+}
+
+export default function Root() {
+  return (
+    <Preferences>
+      <ThemedRoot />
+    </Preferences>
   );
 }

@@ -2,6 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import { BannerCarousel } from "../components/banner-carousel";
+import { membershipsForDisplay } from "../api/memberships";
 import { greetingName } from "../state/greeting";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -19,7 +20,6 @@ import {
   Screen,
   Text,
   Row,
-  Icon,
   Card,
   Stat,
   Button,
@@ -27,7 +27,7 @@ import {
   ListRow,
   Empty,
 } from "../components/ui";
-import { colors as c } from "../theme/tokens";
+import { useTheme } from "../theme/use-theme";
 import {
   dateLabel,
   today,
@@ -41,6 +41,7 @@ export default function Home() {
   return user?.role === "MEMBER" ? <MemberHome /> : <TeamHome />;
 }
 function MemberHome() {
+  const c = useTheme();
   const { user } = useSession();
   const { text, ar } = usePrefs();
   const router = useRouter();
@@ -48,7 +49,7 @@ function MemberHome() {
   const name = greetingName(user);
   const membership = useData("/me/membership", MembershipResponse);
   const workouts = useData("/me/workouts", AssignmentListResponse);
-  const current = membership.data?.current[0];
+  const memberships = membershipsForDisplay(membership.data);
   const workout = workouts.data?.[0];
   return (
     <Screen
@@ -72,6 +73,58 @@ function MemberHome() {
         </View>
       </Row>
       <BannerCarousel />
+      <View testID="home-memberships" style={{ gap: 12 }}>
+        <Section compact title={text("Your membership", "عضويتك")} />
+        <DataState query={membership}>
+          {memberships.map((subscription) => (
+            <Card key={subscription.id} style={{ padding: 16, gap: 10 }}>
+              <Text bold size={15} muted={subscription.status === "EXPIRED"}>
+                {subscription.planName}
+              </Text>
+              <Text muted size={12}>
+                {dateLabel(subscription.startDate, ar)} —{" "}
+                {dateLabel(subscription.endDate, ar)}
+              </Text>
+              {subscription.status === "EXPIRED" && (
+                <Text muted size={12}>
+                  {text("Expired", "منتهية")}
+                </Text>
+              )}
+              {subscription.upcoming && (
+                <Text accent size={12}>
+                  {text("Upcoming", "قادمة")}
+                </Text>
+              )}
+              {subscription.ptSessionsTotal > 0 && (
+                <Row>
+                  <Stat
+                    compact
+                    value={subscription.ptRemaining}
+                    label={text("PT sessions left", "جلسات التدريب المتبقية")}
+                  />
+                  <Stat
+                    compact
+                    value={subscription.ptUsed}
+                    label={text("PT sessions used", "جلسات التدريب المستخدمة")}
+                  />
+                </Row>
+              )}
+            </Card>
+          ))}
+          {!memberships.length && (
+            <Empty
+              title={text(
+                "Your next chapter starts here",
+                "رحلتك الجديدة تبدأ هنا",
+              )}
+              detail={text(
+                "Reception can help activate your membership.",
+                "يمكن للاستقبال مساعدتك في تفعيل اشتراكك.",
+              )}
+            />
+          )}
+        </DataState>
+      </View>
       <Button
         title={text("Check in with QR", "الدخول برمز QR")}
         icon="qr-code-outline"
@@ -79,7 +132,7 @@ function MemberHome() {
       />
       <View style={{ borderRadius: 24, overflow: "hidden" }}>
         <LinearGradient
-          colors={["#203C36", c.card]}
+          colors={[c.hero, c.card]}
           style={{ padding: 16, gap: 8 }}
         >
           <Text accent bold size={12}>
@@ -107,58 +160,6 @@ function MemberHome() {
       </View>
       <Section
         compact
-        title={text("Your membership", "عضويتك")}
-        action={text("View all", "عرض الكل")}
-        onPress={() => router.push("/(app)/membership")}
-      />
-      <DataState query={membership}>
-        {current ? (
-          <Card
-            style={{
-              padding: 16,
-              gap: 10,
-              backgroundColor: "#203B34",
-              borderColor: "#31594B",
-            }}
-          >
-            <Row style={{ justifyContent: "space-between" }}>
-              <Text bold size={15} style={{ flex: 1 }}>
-                {current.planName}
-              </Text>
-              <Icon name="sparkles-outline" color={c.lime} />
-            </Row>
-            <Text muted size={12}>
-              {text("Valid until", "ساري حتى")} {dateLabel(current.endDate, ar)}
-            </Text>
-            <View style={{ height: 1, backgroundColor: "#395449" }} />
-            <Row>
-              <Stat
-                compact
-                value={membership.data?.ptRemaining ?? 0}
-                label={text("PT sessions left", "جلسات التدريب المتبقية")}
-              />
-              <Stat
-                compact
-                value={membership.data?.ptUsed ?? 0}
-                label={text("PT sessions used", "جلسات التدريب المستخدمة")}
-              />
-            </Row>
-          </Card>
-        ) : (
-          <Empty
-            title={text(
-              "Your next chapter starts here",
-              "رحلتك الجديدة تبدأ هنا",
-            )}
-            detail={text(
-              "Reception can help activate your membership.",
-              "يمكن للاستقبال مساعدتك في تفعيل اشتراكك.",
-            )}
-          />
-        )}
-      </DataState>
-      <Section
-        compact
         title={text("A little care goes a long way", "اهتمي بنفسك خطوة بخطوة")}
       />
       <ListRow
@@ -179,6 +180,7 @@ function MemberHome() {
   );
 }
 function TeamHome() {
+  const c = useTheme();
   const { user } = useSession();
   const { text } = usePrefs();
   const router = useRouter();
@@ -200,7 +202,7 @@ function TeamHome() {
         void clients.refetch();
       }}
     >
-      <Card style={{ padding: 16, gap: 10, backgroundColor: "#203B34" }}>
+      <Card style={{ padding: 16, gap: 10, backgroundColor: c.highlight }}>
         <Text accent bold>
           {text("WELCOME BACK", "مرحبًا بعودتك")}
         </Text>

@@ -32,7 +32,7 @@ import {
 import { Picker } from "../components/picker";
 import { today } from "../api/format";
 import { measurementNames } from "./progress";
-import { colors as c } from "../theme/tokens";
+import { useTheme } from "../theme/use-theme";
 type Values = Record<string, any>;
 export function FormInput({
   f,
@@ -43,6 +43,7 @@ export function FormInput({
   value: unknown;
   onChange(v: unknown): void;
 }) {
+  const c = useTheme();
   const { text } = usePrefs();
   const label = text(f.en, f.ar) + (f.required ? " *" : "");
   if (f.endpoint)
@@ -63,7 +64,9 @@ export function FormInput({
           accessibilityLabel={label}
           value={!!value}
           onValueChange={onChange}
-          trackColor={{ true: c.accent }}
+          trackColor={{ true: c.primary, false: c.line }}
+          thumbColor={c.card}
+          ios_backgroundColor={c.line}
         />
       </Row>
     );
@@ -104,7 +107,7 @@ export function FormInput({
                 padding: 16,
                 borderRadius: 16,
                 backgroundColor: ((value as number[]) || []).includes(Number(o))
-                  ? c.accent
+                  ? c.primary
                   : c.card,
               }}
             >
@@ -146,6 +149,7 @@ export function FormInput({
   );
 }
 export default function Editor() {
+  const c = useTheme();
   const params = useLocalSearchParams<{
     kind?: string;
     screen?: string;

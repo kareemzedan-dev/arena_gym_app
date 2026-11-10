@@ -2,9 +2,10 @@ import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSession } from "../../../mobile/state/session";
 import { usePrefs } from "../../../mobile/state/preferences";
-import { colors as c } from "../../../mobile/theme/tokens";
+import { useTheme } from "../../../mobile/theme/use-theme";
 export const unstable_settings = { initialRouteName: "home" };
 export default function TabsLayout() {
+  const c = useTheme();
   const { user } = useSession();
   const { text, ar } = usePrefs();
   const member = user?.role === "MEMBER";
