@@ -169,15 +169,13 @@ export default function CheckIn() {
           </Text>
         </>
       )}
-      {activePt.length > 0 && (
+      {activePt.length > 0 && !activePt.some((subscription) => subscription.ptUnlimited) && (
         <Card>
           <Text muted>
             {text("PT sessions remaining", "جلسات التدريب الشخصي المتبقية")}
           </Text>
           <Text bold size={30}>
-            {activePt.some((subscription) => subscription.ptUnlimited)
-              ? text("Unlimited", "غير محدود")
-              : activePt.reduce((total, subscription) => total + subscription.ptRemaining, 0)}
+            {activePt.reduce((total, subscription) => total + subscription.ptRemaining, 0)}
           </Text>
         </Card>
       )}

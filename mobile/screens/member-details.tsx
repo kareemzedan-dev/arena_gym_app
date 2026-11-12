@@ -45,7 +45,7 @@ export function Membership() {
         onPress={() => router.push("/(app)/checkin")}
       />
       <DataState query={q}>
-        {q.data?.current.some((subscription) => subscription.scope !== "GYM" && subscription.status === "ACTIVE") && (
+        {q.data?.current.some((subscription) => subscription.scope !== "GYM" && subscription.status === "ACTIVE") && !q.data.ptUnlimited && (
           <Card>
             <Row>
               <Stat
@@ -53,7 +53,7 @@ export function Membership() {
                 label={text("PT sessions used", "جلسات مستخدمة")}
               />
               <Stat
-                value={q.data.ptUnlimited ? text("Unlimited", "غير محدود") : q.data.ptRemaining}
+                value={q.data.ptRemaining}
                 label={text("PT sessions left", "جلسات متبقية")}
               />
             </Row>
@@ -81,9 +81,9 @@ export function Membership() {
             <Text>
               {dateLabel(m.startDate, ar)} — {dateLabel(m.endDate, ar)}
             </Text>
-            {m.scope !== "GYM" && (
+            {m.scope !== "GYM" && !m.ptUnlimited && (
               <Text accent>
-                {m.ptUnlimited ? text("Unlimited", "غير محدود") : `${m.ptRemaining} / ${m.ptSessionsTotal}`} {" "}
+                {m.ptRemaining} / {m.ptSessionsTotal}{" "}
                 {text("PT sessions remaining", "جلسات تدريب متبقية")}
               </Text>
             )}
