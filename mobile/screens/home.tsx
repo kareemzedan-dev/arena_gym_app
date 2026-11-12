@@ -95,11 +95,11 @@ function MemberHome() {
                   {text("Upcoming", "قادمة")}
                 </Text>
               )}
-              {subscription.ptSessionsTotal > 0 && (
+              {subscription.scope !== "GYM" && (
                 <Row>
                   <Stat
                     compact
-                    value={subscription.ptRemaining}
+                    value={subscription.ptUnlimited ? text("Unlimited", "غير محدود") : subscription.ptRemaining}
                     label={text("PT sessions left", "جلسات التدريب المتبقية")}
                   />
                   <Stat

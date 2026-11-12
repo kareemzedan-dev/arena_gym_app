@@ -76,6 +76,7 @@ export const MemberResponse = MemberListItem.extend({
     currentSubscriptions: z.array(SubscriptionSummaryResponse),
     lastSubscription: SubscriptionSummaryResponse.nullable(),
     ptRemaining: z.number().int(),
+    ptUnlimited: z.boolean().prefault(false),
     outstandingBalance: moneyResponse,
 });
 export type MemberResponse = z.infer<typeof MemberResponse>;

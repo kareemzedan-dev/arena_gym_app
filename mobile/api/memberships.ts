@@ -19,3 +19,15 @@ export function membershipsForDisplay(
     (s, index) => selected.findIndex((other) => other.id === s.id) === index,
   );
 }
+
+export function activePtMemberships(
+  data: z.output<typeof MembershipResponse> | undefined,
+  day: string,
+) {
+  return data?.current.filter(
+    (subscription) =>
+      subscription.status === "ACTIVE" &&
+      (subscription.scope === "PT" || subscription.scope === "BUNDLE") &&
+      (!subscription.ptEndDate || subscription.ptEndDate >= day),
+  ) ?? [];
+}

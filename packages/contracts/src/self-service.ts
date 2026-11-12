@@ -9,5 +9,5 @@ export const MeAttendanceQuery = AttendanceListQuery.omit({ memberId: true, bran
 export type MeAttendanceQuery = z.infer<typeof MeAttendanceQuery>;
 export const MeInvoicesQuery = InvoiceListQuery.omit({ memberId: true, branchId: true }).strict();
 export type MeInvoicesQuery = z.infer<typeof MeInvoicesQuery>;
-export const MembershipResponse = z.object({ current: z.array(SubscriptionResponse), upcoming: z.array(SubscriptionResponse), lastExpired: SubscriptionResponse.nullable(), ptUsed: z.number().int(), ptRemaining: z.number().int() });
+export const MembershipResponse = z.object({ current: z.array(SubscriptionResponse), upcoming: z.array(SubscriptionResponse), lastExpired: SubscriptionResponse.nullable(), ptUsed: z.number().int(), ptRemaining: z.number().int(), ptUnlimited: z.boolean().prefault(false) });
 export const MyCoachResponse = CoachProfileResponse.extend({ id, mobile: z.string().nullable() }).nullable();

@@ -443,6 +443,7 @@
         "price": "25",
         "durationDays": 30,
         "scope": "GYM",
+        "ptUnlimited": false,
         "isActive": true,
         "ptSessions": 0
       }
@@ -467,6 +468,7 @@
         "durationDays": 30,
         "scope": "PT",
         "ptSessions": 12,
+        "ptUnlimited": false,
         "isActive": true
       }
     }

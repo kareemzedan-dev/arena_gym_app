@@ -20,13 +20,16 @@ const fields = z
     durationDays: z.number().int().min(1).max(3650),
     scope: PlanScope,
     ptSessions: z.number().int().min(0).max(2147483647).optional(),
+    ptUnlimited: z.boolean().prefault(false),
+    gymSessionMinutes: z.number().int().min(15).max(240).nullable().optional(),
+    ptSessionMinutes: z.number().int().min(15).max(240).nullable().optional(),
     description: text.nullable().optional(),
     isActive: z.boolean().prefault(true),
 })
     .strict();
 export const PlanRequest = fields
     .superRefine((value, ctx) => {
-    if (value.scope !== "GYM" && !(value.ptSessions && value.ptSessions >= 1)) {
+    if (value.scope !== "GYM" && !value.ptUnlimited && !(value.ptSessions && value.ptSessions >= 1)) {
         ctx.addIssue({
             code: "custom",
             path: ["ptSessions"],
@@ -36,7 +39,8 @@ export const PlanRequest = fields
 })
     .transform((value) => ({
     ...value,
-    ptSessions: value.scope === "GYM" ? 0 : value.ptSessions!,
+    ptSessions: value.scope === "GYM" || value.ptUnlimited ? 0 : value.ptSessions!,
+    ptUnlimited: value.scope === "GYM" ? false : value.ptUnlimited,
 }));
 export type PlanRequest = z.infer<typeof PlanRequest>;
 export const PlanUpdateRequest = partialWithoutDefaults(fields).strict();
@@ -64,6 +68,9 @@ export const PlanResponse = z.object({
     durationDays: z.number().int(),
     scope: PlanScope,
     ptSessions: z.number().int(),
+    ptUnlimited: z.boolean().prefault(false),
+    gymSessionMinutes: z.number().int().nullable().optional(),
+    ptSessionMinutes: z.number().int().nullable().optional(),
     description: z.string().nullable(),
     isActive: z.boolean(),
     createdAt: timestamp,

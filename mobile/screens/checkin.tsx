@@ -13,6 +13,8 @@ import { Screen, Text, Card, Button, Loading } from "../components/ui";
 import { useSession } from "../state/session";
 import { usePrefs } from "../state/preferences";
 import { greetingName } from "../state/greeting";
+import { today } from "../api/format";
+import { activePtMemberships } from "../api/memberships";
 
 export default function CheckIn() {
   const c = useTheme();
@@ -24,6 +26,10 @@ export default function CheckIn() {
   const [resuming, setResuming] = useState(false);
   const [now, setNow] = useState(Date.now());
   const membership = useData("/me/membership", MembershipResponse);
+  const activePt = activePtMemberships(membership.data, today());
+  const hasAvailablePt = activePt.some(
+    (subscription) => subscription.ptUnlimited || subscription.ptRemaining > 0,
+  );
   const token = useQuery({
     queryKey: ["api", "/me/check-in-token"],
     queryFn: () => api.request("/me/check-in-token", CheckInTokenResponse),
@@ -86,10 +92,15 @@ export default function CheckIn() {
   return (
     <Screen back title={text("Check in with QR", "الدخول برمز QR")}>
       <Text muted>
-        {text(
-          "Show this code at reception. One session is deducted when scanned.",
-          "اعرضي هذا الرمز لدى الاستقبال. تُخصم جلسة واحدة عند مسحه.",
-        )}
+        {hasAvailablePt
+          ? text(
+              "Show this code at reception. One PT session is used when scanned.",
+              "اعرضي هذا الرمز لدى الاستقبال. تُستخدم جلسة تدريب شخصي عند مسحه.",
+            )
+          : text(
+              "Show this code at reception for gym entry.",
+              "اعرضي هذا الرمز لدى الاستقبال لدخول الجيم.",
+            )}
       </Text>
       <Text bold size={22}>
         {user?.fullName?.trim() || greetingName(user)}
@@ -158,16 +169,18 @@ export default function CheckIn() {
           </Text>
         </>
       )}
-      <DataState query={membership}>
+      {activePt.length > 0 && (
         <Card>
           <Text muted>
             {text("PT sessions remaining", "جلسات التدريب الشخصي المتبقية")}
           </Text>
           <Text bold size={30}>
-            {membership.data?.ptRemaining ?? 0}
+            {activePt.some((subscription) => subscription.ptUnlimited)
+              ? text("Unlimited", "غير محدود")
+              : activePt.reduce((total, subscription) => total + subscription.ptRemaining, 0)}
           </Text>
         </Card>
-      </DataState>
+      )}
     </Screen>
   );
 }

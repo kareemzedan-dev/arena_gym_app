@@ -43,6 +43,7 @@ export const SubscriptionResponse = z.object({
     status: SubscriptionStatus,
     upcoming: z.boolean(),
     ptSessionsTotal: z.number().int(),
+    ptUnlimited: z.boolean().prefault(false),
     ptUsed: z.number().int(),
     ptRemaining: z.number().int(),
     priceAtSale: moneyResponse,

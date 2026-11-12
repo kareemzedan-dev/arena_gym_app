@@ -21,5 +21,5 @@ export const CheckInTokenResponse = z.object({ token: z.string(), expiresAt: tim
 export type CheckInTokenResponse = z.infer<typeof CheckInTokenResponse>;
 export const QrAttendanceRequest = z.object({ token: z.string().min(1).max(1024) }).strict();
 export type QrAttendanceRequest = z.infer<typeof QrAttendanceRequest>;
-export const QrAttendanceResponse = AttendanceResponse.extend({ memberName: z.string(), remainingSessions: z.number().int() });
+export const QrAttendanceResponse = AttendanceResponse.extend({ memberName: z.string(), remainingSessions: z.number().int(), ptUnlimited: z.boolean().prefault(false) });
 export type QrAttendanceResponse = z.infer<typeof QrAttendanceResponse>;

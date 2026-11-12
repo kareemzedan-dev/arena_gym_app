@@ -95,6 +95,7 @@ export const PtBookingResponse = z.object({
     coach: identity,
     planName: z.string(),
     sessionsRemaining: z.number().int(),
+    ptUnlimited: z.boolean().prefault(false),
     createdAt: timestamp,
     updatedAt: timestamp,
 });

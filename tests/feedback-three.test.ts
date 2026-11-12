@@ -6,7 +6,7 @@ import {
   bannerDuration,
   MobileBannerListResponse,
 } from "../mobile/api/banners";
-import { membershipsForDisplay } from "../mobile/api/memberships";
+import { activePtMemberships, membershipsForDisplay } from "../mobile/api/memberships";
 import { seatsLeft, nextClassDate } from "../mobile/api/schedule";
 import { MobileScheduleResponse } from "../mobile/api/class-availability";
 import { chartScale, chartX } from "../mobile/screens/chart-scale";
@@ -132,6 +132,15 @@ test("membership selection handles zero, current, upcoming, duplicates, and expi
     }).map((s) => s.id),
     [3, 4],
   );
+});
+test("QR hides PT balance for gym-only and expired PT memberships", () => {
+  const day = "2026-11-12";
+  const row = (scope: SubscriptionResponse["scope"], status: SubscriptionResponse["status"], ptEndDate: string | null = null) =>
+    ({ id: 1, scope, status, ptEndDate }) as SubscriptionResponse;
+  const data = { current: [row("GYM", "ACTIVE"), row("PT", "EXPIRED"), row("BUNDLE", "ACTIVE", "2026-11-11")], upcoming: [], lastExpired: null, ptUsed: 0, ptRemaining: 0, ptUnlimited: false };
+  assert.deepEqual(activePtMemberships(data, day), []);
+  const active = row("PT", "ACTIVE", "2026-11-12");
+  assert.deepEqual(activePtMemberships({ ...data, current: [...data.current, active] }, day), [active]);
 });
 test("seats prefer occurrence values and fallback counts only the selected class/date excluding cancellations", () => {
   const bookings = [
