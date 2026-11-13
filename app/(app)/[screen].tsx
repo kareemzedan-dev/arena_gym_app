@@ -4,6 +4,7 @@ import { useSession } from "../../mobile/state/session";
 import { usePrefs } from "../../mobile/state/preferences";
 import { resolveScreenAccess } from "../../mobile/state/screen-access";
 import CheckIn from "../../mobile/screens/checkin";
+import PtBooking from "../../mobile/screens/pt-booking";
 import { Screen, Empty, Loading, Button } from "../../mobile/components/ui";
 import { Workout, Nutrition } from "../../mobile/screens/training";
 import {
@@ -63,6 +64,7 @@ export default function Detail() {
     coach: <Coach />,
     nutrition: <Nutrition />,
     checkin: <CheckIn />,
+    "pt-booking": <PtBooking />,
     client: <Client />,
     pos: <Pos />,
     invoice: <Invoice />,

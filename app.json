@@ -4,20 +4,22 @@
     "slug": "arena_gym_app",
     "icon": "./assets/icon.png",
     "owner": "1st99m",
-    "version": "4.0.4",
+    "version": "4.0.5",
     "scheme": "arenagym",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
-    "platforms": [
-      "android",
-      "ios",
-      "web"
-    ],
+    "platforms": ["android", "ios", "web"],
     "plugins": [
       "expo-router",
       "expo-font",
       "expo-secure-store",
       "expo-localization",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Arena Gym to use the camera to scan member QR codes."
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -29,7 +31,7 @@
     ],
     "android": {
       "package": "com.arenagym.app",
-      "versionCode": 33,
+      "versionCode": 34,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#30afb5"

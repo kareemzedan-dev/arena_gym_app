@@ -176,6 +176,13 @@ function MemberHome() {
         subtitle={text("Your gym. Your community.", "ناديك ومجتمعك الرياضي.")}
         onPress={() => router.push("/(app)/classes")}
       />
+      <ListRow
+        compact
+        icon="time-outline"
+        title={text("Book personal training", "احجزي تدريبًا شخصيًا")}
+        subtitle={text("Choose a trainer and available time", "اختاري المدربة والموعد المناسب")}
+        onPress={() => router.push("/(app)/pt-booking")}
+      />
     </Screen>
   );
 }

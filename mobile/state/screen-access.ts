@@ -26,6 +26,7 @@ export function resolveScreenAccess(
     case "coach":
     case "nutrition":
     case "checkin":
+    case "pt-booking":
       return member ? "allow" : "home";
     case "classes":
     case "workout":

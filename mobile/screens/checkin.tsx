@@ -30,6 +30,7 @@ export default function CheckIn() {
   const hasAvailablePt = activePt.some(
     (subscription) => subscription.ptUnlimited || subscription.ptRemaining > 0,
   );
+  const hasUnlimitedPt = activePt.some((subscription) => subscription.ptUnlimited);
   const token = useQuery({
     queryKey: ["api", "/me/check-in-token"],
     queryFn: () => api.request("/me/check-in-token", CheckInTokenResponse),
@@ -92,10 +93,20 @@ export default function CheckIn() {
   return (
     <Screen back title={text("Check in with QR", "الدخول برمز QR")}>
       <Text muted>
-        {hasAvailablePt
+        {hasUnlimitedPt
+          ? text(
+              "Show this code at reception to record personal training attendance.",
+              "اعرضي هذا الرمز لدى الاستقبال لتسجيل حضور التدريب الشخصي.",
+            )
+          : hasAvailablePt
           ? text(
               "Show this code at reception. One PT session is used when scanned.",
               "اعرضي هذا الرمز لدى الاستقبال. تُستخدم جلسة تدريب شخصي عند مسحه.",
+            )
+          : activePt.length > 0
+          ? text(
+              "No personal training sessions remain. Ask reception about entry.",
+              "لا توجد جلسات تدريب شخصي متبقية. راجعي الاستقبال للدخول.",
             )
           : text(
               "Show this code at reception for gym entry.",
@@ -168,16 +179,6 @@ export default function CheckIn() {
               : text("Refreshing entry code…", "جار تجديد رمز الدخول…")}
           </Text>
         </>
-      )}
-      {activePt.length > 0 && !activePt.some((subscription) => subscription.ptUnlimited) && (
-        <Card>
-          <Text muted>
-            {text("PT sessions remaining", "جلسات التدريب الشخصي المتبقية")}
-          </Text>
-          <Text bold size={30}>
-            {activePt.reduce((total, subscription) => total + subscription.ptRemaining, 0)}
-          </Text>
-        </Card>
       )}
     </Screen>
   );

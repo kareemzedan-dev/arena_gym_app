@@ -33,6 +33,7 @@ import { Picker } from "../components/picker";
 import { today } from "../api/format";
 import { measurementNames } from "./progress";
 import { useTheme } from "../theme/use-theme";
+import { AttendanceScanner } from "./attendance-scanner";
 type Values = Record<string, any>;
 export function FormInput({
   f,
@@ -171,6 +172,7 @@ export default function Editor() {
   });
   const [attempted, setAttempted] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [qrScannerOpen, setQrScannerOpen] = useState(false);
   const q = useData(
     `/${kind}/${id}`,
     config?.response || z.unknown(),
@@ -245,13 +247,30 @@ export default function Editor() {
       back
       title={`${text(id ? "Edit" : "New", id ? "تعديل" : "إضافة")} ${text(config.en, config.ar)}`}
     >
-      <Text muted size={12}>
-        {text("Fields marked * are required.", "الحقول بعلامة * مطلوبة.")}
-      </Text>
-      {id && (q.isPending || q.error) ? (
+      {kind === "attendance" && qrScannerOpen ? (
+        <AttendanceScanner onClose={() => setQrScannerOpen(false)} />
+      ) : id && (q.isPending || q.error) ? (
         <DataState query={q} />
       ) : (
         <>
+          {kind === "attendance" && !id && (
+            <>
+              <Button
+                title={text("Scan member QR", "مسح QR للعضو")}
+                icon="qr-code-outline"
+                onPress={() => setQrScannerOpen(true)}
+              />
+              <Text muted size={12} style={{ textAlign: "center" }}>
+                {text(
+                  "Or select the member below to record attendance manually.",
+                  "أو اختر العضو بالأسفل لتسجيل الحضور يدوياً.",
+                )}
+              </Text>
+            </>
+          )}
+          <Text muted size={12}>
+            {text("Fields marked * are required.", "الحقول بعلامة * مطلوبة.")}
+          </Text>
           {fields.map((f) => (
             <View key={f.key} style={{ gap: 4 }}>
               <FormInput
