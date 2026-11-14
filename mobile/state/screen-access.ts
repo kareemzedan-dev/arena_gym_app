@@ -1,0 +1,85 @@
+import { canFinance, canManage, canTrain } from "../api/format";
+
+export type SessionState = "restoring" | "anonymous" | "authenticated";
+export type ScreenAccess = "loading" | "login" | "home" | "allow";
+
+/** Restored/deep-linked routes must wait for identity before checking permissions. */
+export function resolveScreenAccess(
+  screen: unknown,
+  role: string | undefined,
+  sessionState: SessionState,
+  kind?: unknown,
+): ScreenAccess {
+  if (sessionState === "restoring") return "loading";
+  if (sessionState === "anonymous" || !role) return "login";
+  const member = role === "MEMBER";
+  const admin = canManage(role);
+  const trainer = canTrain(role);
+  const finance = canFinance(role);
+  const staff = trainer || finance;
+  if (!member && !staff) return "home";
+  switch (screen) {
+    case "password":
+    case "history":
+      return "allow";
+    case "membership":
+    case "coach":
+    case "nutrition":
+    case "checkin":
+    case "pt-booking":
+      return member ? "allow" : "home";
+    case "classes":
+    case "workout":
+    case "measurements":
+      return member || trainer ? "allow" : "home";
+    case "notices":
+    case "messages":
+    case "schedule":
+    case "client":
+      return staff ? "allow" : "home";
+    case "invoices":
+      return member || finance ? "allow" : "home";
+    case "invoice":
+    case "pos":
+    case "reports":
+      return finance ? "allow" : "home";
+    case "invoice-edit":
+    case "staff":
+    case "plans":
+    case "plan-categories":
+      return admin ? "allow" : "home";
+    case "exercises":
+    case "workout-plans":
+    case "nutrition-plans":
+    case "attendance":
+      return trainer ? "allow" : "home";
+    case "editor":
+      return canEditKind(role, kind) ? "allow" : "home";
+    default:
+      return "home";
+  }
+}
+
+/** Shared by deep links and catalog create/edit actions. */
+export function canEditKind(role: string | undefined, kind: unknown): boolean {
+  if (typeof kind !== "string") return false;
+  const trainingKinds = [
+    "measurements",
+    "assignments",
+    "workout-plans",
+    "nutrition-plans",
+    "exercises",
+    "attendance",
+  ];
+  const adminKinds = [
+    "members",
+    "staff",
+    "plans",
+    "plan-categories",
+    "classes",
+  ];
+  return (
+    (canTrain(role) && trainingKinds.includes(kind)) ||
+    (canManage(role) && adminKinds.includes(kind))
+  );
+}

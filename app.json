@@ -1,107 +1,65 @@
 {
   "expo": {
-    "jsEngine": "hermes",
+    "name": "Arena Gym",
+    "slug": "arena_gym_app",
+    "icon": "./assets/icon.png",
+    "owner": "1st99m",
+    "version": "4.0.5",
+    "scheme": "arenagym",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "platforms": ["android", "ios", "web"],
     "plugins": [
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/Notification_icon.png",
-          "iosDisplayInForeground": true
-        }
-      ],
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "enableProguardInReleaseBuilds": true,
-            "newArchEnabled": true
-          },
-          "ios": {
-            "useFrameworks": "static"
-          }
-        }
-      ],
-      "expo-localization",
+      "expo-router",
+      "expo-font",
       "expo-secure-store",
+      "expo-localization",
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow Arena Gym app to access camera to scan QR codes."
+          "cameraPermission": "Allow Arena Gym to use the camera to scan member QR codes."
         }
       ],
-      "expo-font",
-      "@config-plugins/react-native-blob-util",
-      "@config-plugins/react-native-pdf"
-
-    ],
-    "name": "Arena Gym",
-    "slug": "arena_gym_app",
-    "platforms": [
-      "ios",
-      "android"
-    ],
-    "version": "3.0.6",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0,
-      "url": "https://u.expo.dev/b6642ad0-4188-4fe2-99e2-ca2b877f3d97"
-    },
-    "assetBundlePatterns": [
-      "**/*"
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icon.png",
+          "imageWidth": 140,
+          "backgroundColor": "#101716"
+        }
+      ]
     ],
     "android": {
-      "versionCode": 28,
-      "googleServicesFile": "./google-services.json",
-      "permissions": [
-        "NOTIFICATIONS",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE",
-        "READ_MEDIA_IMAGES",
-        "READ_MEDIA_VIDEO",
-        "READ_MEDIA_AUDIO",
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
-      ],
-      "package": "com.arenagym.app"
+      "package": "com.arenagym.app",
+      "versionCode": 34,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#30afb5"
+      },
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "ios": {
-      "googleServicesFile": "./GoogleService-Info.plist",
-      "infoPlist": {
-        "NSCameraUsageDescription": "Allow Arena Gym app to access camera to scan QR code.",
-        "NSPhotoLibraryUsageDescription": "Allow Arena Gym app to access photo library to update profile picture.",
-        "NSPhotoLibraryAddUsageDescription": "Allow Arena Gym app to save invoices to photo library.",
-        "ITSAppUsesNonExemptEncryption": false
-      },
       "bundleIdentifier": "com.arenagym.app",
-      "supportsTablet": false
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "web": {
+      "bundler": "metro",
+      "output": "single",
       "favicon": "./assets/favicon.png"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     },
     "extra": {
       "eas": {
         "projectId": "b6642ad0-4188-4fe2-99e2-ca2b877f3d97"
-      },
-      "API_BASE_URL_DEV": "https://app.arenagym-om.com/?gmgt_json_api",
-      "API_BASE_URL_PROD": "https://app.arenagym-om.com/?gmgt_json_api",
-      "MONITOR_SERVER_URL_DEV": "https://monitor.arenagym-om.com",
-      "MONITOR_SERVER_URL_PROD": "https://monitor.arenagym-om.com",
-      "MONITOR_ERROR_ENDPOINT": "/api/log-error",
-      "MONITOR_PERFORMANCE_ENDPOINT": "/api/log-performance",
-      "MONITOR_USER_ACTION_ENDPOINT": "/api/log-user-action",
-      "ENABLE_PERFORMANCE_MONITORING": "false",
-      "PERFORMANCE_CACHE_TIMEOUT": "300000",
-      "API_TIMEOUT": "30000",
-      "ENABLE_ERROR_MONITORING": "false",
-      "LOG_LEVEL": "debug"
-    },
-    "owner": "1st99m",
-    "runtimeVersion": "1.0.0"
+      }
+    }
   }
 }

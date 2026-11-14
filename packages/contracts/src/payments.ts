@@ -1,0 +1,16 @@
+// Generated from the backend by npm run sync:contracts; see docs/contracts-source.json.
+import { partialWithoutDefaults } from "../compat";
+import { z } from 'zod';
+import { BranchQuery, dateOnly, id, money, moneyResponse, pageResponse, PaginationQuery, text, timestamp } from './common';
+export const PaymentMethod = z.enum(['CASH', 'CARD', 'BANK_TRANSFER']);
+export const PaymentRequest = z.object({ amount: money, method: PaymentMethod, note: text.nullable().optional(), paidAt: timestamp.optional() }).strict();
+export type PaymentRequest = z.infer<typeof PaymentRequest>;
+export const PaymentUpdateRequest = partialWithoutDefaults(PaymentRequest).strict();
+export type PaymentUpdateRequest = z.infer<typeof PaymentUpdateRequest>;
+export const PaymentResponse = z.object({ id, invoiceId: id, amount: moneyResponse, method: z.enum(['CASH', 'CARD', 'BANK_TRANSFER', 'LEGACY']), note: z.string().nullable(), paidAt: timestamp, receivedById: id, createdAt: timestamp, updatedAt: timestamp });
+export const PaymentListQuery = PaginationQuery.omit({ sort: true }).merge(BranchQuery).extend({ memberId: z.coerce.number().int().positive().max(2147483647).optional(), method: PaymentResponse.shape.method.optional(), from: dateOnly.optional(), to: dateOnly.optional(), sort: z.enum(['paidAt', '-paidAt', 'amount', '-amount']).prefault('-paidAt') }).strict();
+export type PaymentListQuery = z.infer<typeof PaymentListQuery>;
+export const PaymentListResponse = pageResponse(PaymentResponse).extend({ byMethod: z.array(z.object({ method: PaymentResponse.shape.method, amount: moneyResponse })).optional() });
+export type PaymentMethod = z.infer<typeof PaymentMethod>;
+export type PaymentResponse = z.infer<typeof PaymentResponse>;
+export type PaymentListResponse = z.infer<typeof PaymentListResponse>;

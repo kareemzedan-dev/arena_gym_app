@@ -1,0 +1,18 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "paths": {
+      "@/*": ["./mobile/*"]
+    }
+  },
+  "include": [
+    "app/**/*.tsx",
+    "mobile/**/*.ts",
+    "mobile/**/*.tsx",
+    "packages/contracts/src/**/*.ts",
+    "expo-env.d.ts"
+  ],
+  "exclude": ["src", "App.js", "locals", "node_modules"]
+}

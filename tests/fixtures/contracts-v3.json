@@ -1,0 +1,1266 @@
+[
+  {
+    "schema": "BranchUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "BranchUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "isActive": false
+      }
+    }
+  },
+  {
+    "schema": "BranchUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "name": "Changed"
+      }
+    }
+  },
+  {
+    "schema": "MemberUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "MemberUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "isActive": false
+      }
+    }
+  },
+  {
+    "schema": "MemberUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "StaffUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "StaffUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "isActive": false
+      }
+    }
+  },
+  {
+    "schema": "StaffUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "PlanCategoryUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "PlanCategoryUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "isActive": false
+      }
+    }
+  },
+  {
+    "schema": "PlanCategoryUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "name": "Changed"
+      }
+    }
+  },
+  {
+    "schema": "PlanUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "PlanUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "isActive": false
+      }
+    }
+  },
+  {
+    "schema": "PlanUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "name": "Changed"
+      }
+    }
+  },
+  {
+    "schema": "ProductUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "ProductUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "isActive": false
+      }
+    }
+  },
+  {
+    "schema": "ProductUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "name": "Changed"
+      }
+    }
+  },
+  {
+    "schema": "InvoiceUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "InvoiceUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "InvoiceUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "PaymentUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "PaymentUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "PaymentUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "SubscriptionUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "SubscriptionUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "SubscriptionUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "ClassUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "ClassUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "ClassUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "ExerciseUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "ExerciseUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "ExerciseUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "name": "Changed"
+      }
+    }
+  },
+  {
+    "schema": "MeasurementUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "MeasurementUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "MeasurementUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "NutritionUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "NutritionUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "NutritionUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "name": "Changed"
+      }
+    }
+  },
+  {
+    "schema": "WorkoutUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {}
+    }
+  },
+  {
+    "schema": "WorkoutUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "WorkoutUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "name": "Changed"
+      }
+    }
+  },
+  {
+    "schema": "PtAvailabilityUpdateRequest",
+    "input": {},
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "PtAvailabilityUpdateRequest",
+    "input": {
+      "isActive": false
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "PtAvailabilityUpdateRequest",
+    "input": {
+      "name": "  Changed  "
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "PlanRequest",
+    "input": {
+      "name": "Gym",
+      "categoryId": 1,
+      "price": 25,
+      "durationDays": 30,
+      "scope": "GYM"
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "name": "Gym",
+        "categoryId": 1,
+        "price": "25",
+        "durationDays": 30,
+        "scope": "GYM",
+        "ptUnlimited": false,
+        "isActive": true,
+        "ptSessions": 0
+      }
+    }
+  },
+  {
+    "schema": "PlanRequest",
+    "input": {
+      "name": "PT",
+      "categoryId": 1,
+      "price": "0.001",
+      "durationDays": 30,
+      "scope": "PT",
+      "ptSessions": 12
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "name": "PT",
+        "categoryId": 1,
+        "price": "0.001",
+        "durationDays": 30,
+        "scope": "PT",
+        "ptSessions": 12,
+        "ptUnlimited": false,
+        "isActive": true
+      }
+    }
+  },
+  {
+    "schema": "PlanRequest",
+    "input": {
+      "name": "PT",
+      "categoryId": 1,
+      "price": "1.000",
+      "durationDays": 30,
+      "scope": "PT",
+      "ptSessions": 0
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "StaffRequest",
+    "input": {
+      "username": "coach",
+      "password": "password",
+      "role": "STAFF_MEMBER",
+      "fullName": "Coach"
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "username": "coach",
+        "fullName": "Coach",
+        "role": "STAFF_MEMBER",
+        "password": "password"
+      }
+    }
+  },
+  {
+    "schema": "StaffRequest",
+    "input": {
+      "username": "admin",
+      "password": "password",
+      "role": "ADMINISTRATOR"
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "username": "admin",
+        "role": "ADMINISTRATOR",
+        "password": "password"
+      }
+    }
+  },
+  {
+    "schema": "StaffRequest",
+    "input": {
+      "username": "coach",
+      "password": "password",
+      "role": "STAFF_MEMBER"
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "MemberRequest",
+    "input": {
+      "username": "member",
+      "password": "password",
+      "branchId": 1,
+      "fullName": "Member",
+      "email": "member+gym@example.com"
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "username": "member",
+        "email": "member+gym@example.com",
+        "branchId": 1,
+        "fullName": "Member",
+        "password": "password"
+      }
+    }
+  },
+  {
+    "schema": "MemberRequest",
+    "input": {
+      "username": "member",
+      "password": "password",
+      "branchId": 1,
+      "fullName": "Member",
+      "email": "bad@"
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "PaginationQuery",
+    "input": {},
+    "expected": {
+      "success": true,
+      "data": {
+        "page": 1,
+        "pageSize": 20,
+        "sort": "name"
+      }
+    }
+  },
+  {
+    "schema": "PaginationQuery",
+    "input": {
+      "page": "2",
+      "pageSize": "100"
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "page": 2,
+        "pageSize": 100,
+        "sort": "name"
+      }
+    }
+  },
+  {
+    "schema": "PaginationQuery",
+    "input": {
+      "pageSize": 101
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "CheckoutRequest",
+    "input": {
+      "memberId": 1,
+      "items": [
+        {
+          "type": "PLAN",
+          "planId": 1
+        }
+      ],
+      "payment": {
+        "amount": "0.001",
+        "method": "CASH"
+      }
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "memberId": 1,
+        "items": [
+          {
+            "type": "PLAN",
+            "planId": 1
+          }
+        ],
+        "payment": {
+          "amount": "0.001",
+          "method": "CASH"
+        }
+      }
+    }
+  },
+  {
+    "schema": "CheckoutRequest",
+    "input": {
+      "memberId": 1,
+      "items": []
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "InvoiceUpdateRequest",
+    "input": {
+      "payments": []
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "InvoiceUpdateRequest",
+    "input": {
+      "payments": [],
+      "expectedUpdatedAt": "2026-11-04T10:00:00.000Z",
+      "correctionReason": "Duplicate payment"
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "payments": [],
+        "correctionReason": "Duplicate payment",
+        "expectedUpdatedAt": "2026-11-04T10:00:00.000Z"
+      }
+    }
+  },
+  {
+    "schema": "ClassRequest",
+    "input": {
+      "name": "Class",
+      "coachId": 1,
+      "branchId": 1,
+      "weekDays": [
+        1
+      ],
+      "planIds": [
+        1
+      ],
+      "startDate": "2026-11-04",
+      "endDate": "2026-12-04",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "capacity": 10
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "bookingEnabled": true,
+        "name": "Class",
+        "coachId": 1,
+        "branchId": 1,
+        "planIds": [
+          1
+        ],
+        "weekDays": [
+          1
+        ],
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "capacity": 10,
+        "startDate": "2026-11-04",
+        "endDate": "2026-12-04"
+      }
+    }
+  },
+  {
+    "schema": "ClassUpdateRequest",
+    "input": {
+      "coachId": 1,
+      "capacity": 20
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "coachId": 1,
+        "capacity": 20
+      }
+    }
+  },
+  {
+    "schema": "CouponRequest",
+    "input": {
+      "code": "save",
+      "name": "Save",
+      "discountType": "PERCENT",
+      "value": "10",
+      "startDate": "2026-11-04",
+      "endDate": "2026-12-04"
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "code": "SAVE",
+        "name": "Save",
+        "discountType": "PERCENT",
+        "value": "10",
+        "startDate": "2026-11-04",
+        "endDate": "2026-12-04",
+        "memberId": null,
+        "planId": null,
+        "maxUses": null,
+        "perMemberLimit": null,
+        "isActive": true
+      }
+    }
+  },
+  {
+    "schema": "CouponRequest",
+    "input": {
+      "code": "save",
+      "name": "Save",
+      "discountType": "PERCENT",
+      "value": "101",
+      "startDate": "2026-11-04",
+      "endDate": "2026-12-04"
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "CouponRequest",
+    "input": {
+      "code": "save",
+      "name": "Save",
+      "discountType": "PERCENT",
+      "value": "10",
+      "startDate": "2026-11-04",
+      "endDate": "2026-01-01"
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "CouponResponse",
+    "input": {
+      "code": "save",
+      "name": "Save",
+      "discountType": "PERCENT",
+      "value": "101",
+      "startDate": "2026-11-04",
+      "endDate": "2026-12-04",
+      "id": 1,
+      "used": 0,
+      "createdAt": "2026-11-04T10:00:00.000Z",
+      "updatedAt": "2026-11-04T10:00:00.000Z"
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "code": "SAVE",
+        "name": "Save",
+        "discountType": "PERCENT",
+        "value": "101",
+        "startDate": "2026-11-04",
+        "endDate": "2026-12-04",
+        "memberId": null,
+        "planId": null,
+        "maxUses": null,
+        "perMemberLimit": null,
+        "isActive": true,
+        "id": 1,
+        "used": 0,
+        "createdAt": "2026-11-04T10:00:00.000Z",
+        "updatedAt": "2026-11-04T10:00:00.000Z"
+      }
+    }
+  },
+  {
+    "schema": "OperationResponse",
+    "input": {
+      "id": 1,
+      "kind": "notices",
+      "title": "Notice",
+      "data": {
+        "body": "Hello"
+      },
+      "createdAt": "2026-11-04T10:00:00.000Z",
+      "updatedAt": "2026-11-04T10:00:00.000Z"
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "WorkoutRequest",
+    "input": {
+      "name": "Strength",
+      "items": [
+        {
+          "exerciseId": 1,
+          "sets": 3,
+          "reps": 12,
+          "order": 0
+        }
+      ]
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "name": "Strength",
+        "items": [
+          {
+            "exerciseId": 1,
+            "sets": 3,
+            "reps": 12,
+            "order": 0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "schema": "NutritionRequest",
+    "input": {
+      "name": "Fuel",
+      "memberId": 1,
+      "meals": [
+        {
+          "name": "Breakfast",
+          "order": 0,
+          "items": [
+            {
+              "food": "Oats",
+              "quantity": "60g"
+            }
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "name": "Fuel",
+        "memberId": 1,
+        "meals": [
+          {
+            "name": "Breakfast",
+            "order": 0,
+            "items": [
+              {
+                "food": "Oats",
+                "quantity": "60g"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "schema": "MeasurementRequest",
+    "input": {
+      "measuredOn": "2026-11-04",
+      "weight": "80.25"
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "weight": "80.25",
+        "measuredOn": "2026-11-04"
+      }
+    }
+  },
+  {
+    "schema": "MeasurementRequest",
+    "input": {
+      "measuredOn": "2026-02-31",
+      "weight": "80.25"
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "MeasurementRequest",
+    "input": {
+      "measuredOn": "2026-11-04"
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "LoginRequest",
+    "input": {
+      "identifier": " user ",
+      "password": " pass "
+    },
+    "expected": {
+      "success": true,
+      "data": {
+        "identifier": "user",
+        "password": " pass "
+      }
+    }
+  },
+  {
+    "schema": "LoginRequest",
+    "input": {
+      "identifier": "user",
+      "password": ""
+    },
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "money",
+    "input": null,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "money",
+    "input": "",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "money",
+    "input": 0,
+    "expected": {
+      "success": true,
+      "data": "0"
+    }
+  },
+  {
+    "schema": "money",
+    "input": -1,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "money",
+    "input": "2028-02-29",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "money",
+    "input": "2026-02-29",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "money",
+    "input": "2026-11-04T10:00:00Z",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "money",
+    "input": "0.001",
+    "expected": {
+      "success": true,
+      "data": "0.001"
+    }
+  },
+  {
+    "schema": "money",
+    "input": "999999999.999",
+    "expected": {
+      "success": true,
+      "data": "999999999.999"
+    }
+  },
+  {
+    "schema": "money",
+    "input": "1000000000.000",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "money",
+    "input": 2147483648,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "dateOnly",
+    "input": null,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "dateOnly",
+    "input": "",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "dateOnly",
+    "input": 0,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "dateOnly",
+    "input": -1,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "dateOnly",
+    "input": "2028-02-29",
+    "expected": {
+      "success": true,
+      "data": "2028-02-29"
+    }
+  },
+  {
+    "schema": "dateOnly",
+    "input": "2026-02-29",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "dateOnly",
+    "input": "2026-11-04T10:00:00Z",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "dateOnly",
+    "input": "0.001",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "dateOnly",
+    "input": "999999999.999",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "dateOnly",
+    "input": "1000000000.000",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "dateOnly",
+    "input": 2147483648,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "timestamp",
+    "input": null,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "timestamp",
+    "input": "",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "timestamp",
+    "input": 0,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "timestamp",
+    "input": -1,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "timestamp",
+    "input": "2028-02-29",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "timestamp",
+    "input": "2026-02-29",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "timestamp",
+    "input": "2026-11-04T10:00:00Z",
+    "expected": {
+      "success": true,
+      "data": "2026-11-04T10:00:00Z"
+    }
+  },
+  {
+    "schema": "timestamp",
+    "input": "0.001",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "timestamp",
+    "input": "999999999.999",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "timestamp",
+    "input": "1000000000.000",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "timestamp",
+    "input": 2147483648,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "id",
+    "input": null,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "id",
+    "input": "",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "id",
+    "input": 0,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "id",
+    "input": -1,
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "id",
+    "input": "2028-02-29",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "id",
+    "input": "2026-02-29",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "id",
+    "input": "2026-11-04T10:00:00Z",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "id",
+    "input": "0.001",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "id",
+    "input": "999999999.999",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "id",
+    "input": "1000000000.000",
+    "expected": {
+      "success": false
+    }
+  },
+  {
+    "schema": "id",
+    "input": 2147483648,
+    "expected": {
+      "success": false
+    }
+  }
+]
