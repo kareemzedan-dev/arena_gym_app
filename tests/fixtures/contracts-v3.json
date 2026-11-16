@@ -444,8 +444,10 @@
         "durationDays": 30,
         "scope": "GYM",
         "ptUnlimited": false,
+        "gymUnlimited": true,
         "isActive": true,
-        "ptSessions": 0
+        "ptSessions": 0,
+        "gymVisits": 0
       }
     }
   },
@@ -469,7 +471,9 @@
         "scope": "PT",
         "ptSessions": 12,
         "ptUnlimited": false,
-        "isActive": true
+        "gymUnlimited": true,
+        "isActive": true,
+        "gymVisits": 0
       }
     }
   },
