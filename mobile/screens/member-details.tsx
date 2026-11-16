@@ -31,6 +31,12 @@ export function Membership() {
   const { text, ar } = usePrefs();
   const router = useRouter();
   const q = useData("/me/membership", MembershipResponse);
+  const limitedPt = (q.data?.current ?? []).filter(
+    (subscription) =>
+      subscription.scope !== "GYM" &&
+      subscription.status === "ACTIVE" &&
+      !subscription.ptUnlimited,
+  );
   return (
     <Screen
       back
@@ -45,15 +51,15 @@ export function Membership() {
         onPress={() => router.push("/(app)/checkin")}
       />
       <DataState query={q}>
-        {q.data?.current.some((subscription) => subscription.scope !== "GYM" && subscription.status === "ACTIVE") && !q.data.ptUnlimited && (
+        {limitedPt.length > 0 && (
           <Card>
             <Row>
               <Stat
-                value={q.data.ptUsed}
+                value={limitedPt.reduce((n, s) => n + s.ptUsed, 0)}
                 label={text("PT sessions used", "جلسات مستخدمة")}
               />
               <Stat
-                value={q.data.ptRemaining}
+                value={limitedPt.reduce((n, s) => n + s.ptRemaining, 0)}
                 label={text("PT sessions left", "جلسات متبقية")}
               />
             </Row>
