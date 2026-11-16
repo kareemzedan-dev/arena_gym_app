@@ -95,6 +95,11 @@ function MemberHome() {
                   {text("Upcoming", "قادمة")}
                 </Text>
               )}
+              {subscription.scope !== "GYM" && subscription.ptUnlimited && (
+                <Text accent size={12}>
+                  {text("Unlimited personal training", "تدريب شخصي غير محدود")}
+                </Text>
+              )}
               {subscription.scope !== "GYM" && !subscription.ptUnlimited && (
                 <Row>
                   <Stat
@@ -180,7 +185,10 @@ function MemberHome() {
         compact
         icon="time-outline"
         title={text("Book personal training", "احجزي تدريبًا شخصيًا")}
-        subtitle={text("Choose a trainer and available time", "اختاري المدربة والموعد المناسب")}
+        subtitle={text(
+          "Choose a trainer and available time",
+          "اختاري المدربة والموعد المناسب",
+        )}
         onPress={() => router.push("/(app)/pt-booking")}
       />
     </Screen>

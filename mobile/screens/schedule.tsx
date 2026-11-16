@@ -31,6 +31,12 @@ import {
 import { MobileScheduleResponse } from "../api/class-availability";
 import { mergeSchedule, seatsLeft, nextClassDate } from "../api/schedule";
 import { today, addDays, dateLabel, timeLabel, canManage } from "../api/format";
+const ptStatusLabels: Record<string, [string, string]> = {
+  SCHEDULED: ["Scheduled", "محجوزة"],
+  COMPLETED: ["Completed", "مكتملة"],
+  NO_SHOW: ["No show", "لم تحضر"],
+  CANCELLED: ["Cancelled", "ملغاة"],
+};
 export function Schedule() {
   const c = useTheme();
   const { user } = useSession();
@@ -104,7 +110,7 @@ export function Schedule() {
                 </Text>
                 <Text muted>
                   {entry.kind === "pt"
-                    ? `${entry.item.coachName} · ${entry.item.status}`
+                    ? `${entry.item.coachName} · ${text(...(ptStatusLabels[entry.item.status] ?? [entry.item.status, entry.item.status]))}`
                     : `${entry.item.coach?.fullName || ""} · ${entry.item.branch?.name || ""}`}
                 </Text>
               </Card>
