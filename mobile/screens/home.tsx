@@ -95,6 +95,20 @@ function MemberHome() {
                   {text("Upcoming", "قادمة")}
                 </Text>
               )}
+              {subscription.scope !== "PT" && !subscription.gymUnlimited && (
+                <Row>
+                  <Stat
+                    compact
+                    value={subscription.gymRemaining}
+                    label={text("Gym visits left", "زيارات الجيم المتبقية")}
+                  />
+                  <Stat
+                    compact
+                    value={subscription.gymUsed}
+                    label={text("Gym visits used", "زيارات الجيم المستخدمة")}
+                  />
+                </Row>
+              )}
               {subscription.scope !== "GYM" && subscription.ptUnlimited && (
                 <Text accent size={12}>
                   {text("Unlimited personal training", "تدريب شخصي غير محدود")}

@@ -9,7 +9,6 @@ export const CheckoutRequest = z
     .object({
     memberId: id,
     includeSignupFees: z.boolean().optional(),
-    couponCode: z.string().trim().min(2).max(60).optional(),
     taxIds: z.array(id).max(20).optional(),
     items: z
         .array(z.union([

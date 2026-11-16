@@ -21,6 +21,8 @@ const fields = z
     scope: PlanScope,
     ptSessions: z.number().int().min(0).max(2147483647).optional(),
     ptUnlimited: z.boolean().prefault(false),
+    gymUnlimited: z.boolean().prefault(true),
+    gymVisits: z.number().int().min(0).max(2147483647).optional(),
     gymSessionMinutes: z.number().int().min(15).max(240).nullable().optional(),
     ptSessionMinutes: z.number().int().min(15).max(240).nullable().optional(),
     description: text.nullable().optional(),
@@ -36,11 +38,20 @@ export const PlanRequest = fields
             message: "PT and BUNDLE plans require at least one session",
         });
     }
+    if (value.scope !== "PT" && !value.gymUnlimited && !(value.gymVisits && value.gymVisits >= 1)) {
+        ctx.addIssue({
+            code: "custom",
+            path: ["gymVisits"],
+            message: "Limited gym access requires at least one visit",
+        });
+    }
 })
     .transform((value) => ({
     ...value,
     ptSessions: value.scope === "GYM" || value.ptUnlimited ? 0 : value.ptSessions!,
     ptUnlimited: value.scope === "GYM" ? false : value.ptUnlimited,
+    gymVisits: value.scope === "PT" || value.gymUnlimited ? 0 : value.gymVisits!,
+    gymUnlimited: value.scope === "PT" ? true : value.gymUnlimited,
 }));
 export type PlanRequest = z.infer<typeof PlanRequest>;
 export const PlanUpdateRequest = partialWithoutDefaults(fields).strict();
@@ -69,6 +80,8 @@ export const PlanResponse = z.object({
     scope: PlanScope,
     ptSessions: z.number().int(),
     ptUnlimited: z.boolean().prefault(false),
+    gymUnlimited: z.boolean().prefault(true),
+    gymVisits: z.number().int().prefault(0),
     gymSessionMinutes: z.number().int().nullable().optional(),
     ptSessionMinutes: z.number().int().nullable().optional(),
     description: z.string().nullable(),

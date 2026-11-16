@@ -87,6 +87,12 @@ export function Membership() {
             <Text>
               {dateLabel(m.startDate, ar)} — {dateLabel(m.endDate, ar)}
             </Text>
+            {m.scope !== "PT" && !m.gymUnlimited && (
+              <Text accent>
+                {m.gymRemaining} / {m.gymVisitsTotal}{" "}
+                {text("gym visits remaining", "زيارات جيم متبقية")}
+              </Text>
+            )}
             {m.scope !== "GYM" && !m.ptUnlimited && (
               <Text accent>
                 {m.ptRemaining} / {m.ptSessionsTotal}{" "}

@@ -463,6 +463,40 @@ export function Empty({
     </Card>
   );
 }
+/** Server business-rule codes shown to staff and members in plain language. */
+const businessErrors: Record<string, [string, string]> = {
+  NO_SESSIONS_LEFT: [
+    "No personal training sessions left.",
+    "لا توجد جلسات تدريب شخصي متبقية.",
+  ],
+  NO_GYM_VISITS_LEFT: [
+    "No gym visits left on this subscription.",
+    "انتهت زيارات الجيم في هذا الاشتراك.",
+  ],
+  NO_ACTIVE_SUBSCRIPTION: ["No active subscription.", "لا يوجد اشتراك ساري."],
+  MEMBER_INACTIVE: [
+    "This member account is inactive.",
+    "حساب العضو غير مفعّل.",
+  ],
+  DUPLICATE_ATTENDANCE: [
+    "Attendance is already recorded today.",
+    "تم تسجيل الحضور اليوم مسبقًا.",
+  ],
+  CLASS_FULL: ["This class is full.", "هذه الحصة مكتملة."],
+  PLAN_NOT_ALLOWED: [
+    "The member's plan does not include this class.",
+    "اشتراك العضو لا يشمل هذه الحصة.",
+  ],
+  QR_EXPIRED: [
+    "This QR code expired. Ask the member to refresh it.",
+    "انتهت صلاحية رمز QR. اطلب من العضو تحديثه.",
+  ],
+  QR_INVALID: ["This is not a valid member QR code.", "رمز QR غير صالح."],
+  QR_REPLAYED: [
+    "This QR code was already used.",
+    "تم استخدام رمز QR هذا مسبقًا.",
+  ],
+};
 export function Failure({
   error,
   retry,
@@ -473,35 +507,44 @@ export function Failure({
   const c = useTheme();
   const { text } = usePrefs();
   const code = error instanceof ApiError ? error.status : 0;
+  const reason =
+    error instanceof ApiError ? businessErrors[error.code] : undefined;
   return (
     <Card style={{ borderColor: c.dangerBorder }}>
       <Text style={{ color: c.red }} accessibilityRole="alert">
-        {code === 401
-          ? text("Please sign in again.", "سجّل الدخول مرة أخرى.")
-          : code === 403
-            ? text(
-                "Your account cannot access this action.",
-                "هذه العملية غير متاحة لحسابك.",
-              )
-            : code === 429
+        {reason
+          ? text(...reason)
+          : code === 401
+            ? text("Please sign in again.", "سجّل الدخول مرة أخرى.")
+            : code === 403
               ? text(
-                  "Too many attempts. Please wait a minute.",
-                  "محاولات كثيرة. انتظر دقيقة ثم حاول مجددًا.",
+                  "Your account cannot access this action.",
+                  "هذه العملية غير متاحة لحسابك.",
                 )
-              : code === 409
+              : code === 429
                 ? text(
-                    "This record changed or conflicts with an existing record. Refresh and review.",
-                    "تغيّرت البيانات أو تعارضت مع سجل موجود. حدّث البيانات وراجعها.",
+                    "Too many attempts. Please wait a minute.",
+                    "محاولات كثيرة. انتظر دقيقة ثم حاول مجددًا.",
                   )
-                : code === 400
+                : code === 422
                   ? text(
-                      "Check the values and try again.",
-                      "راجع البيانات وحاول مرة أخرى.",
+                      "This action is not allowed for this member right now.",
+                      "لا يمكن إتمام هذه العملية لهذا العضو حاليًا.",
                     )
-                  : text(
-                      "Could not connect. Check your connection and try again.",
-                      "تعذر الاتصال. تأكد من الإنترنت وحاول مجددًا.",
-                    )}
+                  : code === 409
+                    ? text(
+                        "This record changed or conflicts with an existing record. Refresh and review.",
+                        "تغيّرت البيانات أو تعارضت مع سجل موجود. حدّث البيانات وراجعها.",
+                      )
+                    : code === 400
+                      ? text(
+                          "Check the values and try again.",
+                          "راجع البيانات وحاول مرة أخرى.",
+                        )
+                      : text(
+                          "Could not connect. Check your connection and try again.",
+                          "تعذر الاتصال. تأكد من الإنترنت وحاول مجددًا.",
+                        )}
       </Text>
       {retry && (
         <Button
