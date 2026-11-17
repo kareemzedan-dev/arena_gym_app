@@ -496,6 +496,14 @@ const businessErrors: Record<string, [string, string]> = {
     "This QR code was already used.",
     "تم استخدام رمز QR هذا مسبقًا.",
   ],
+  PLAN_CLASS_LIMIT: [
+    "A selected plan reached its maximum number of linked classes.",
+    "أحد الاشتراكات المختارة وصل إلى الحد الأقصى للحصص المرتبطة.",
+  ],
+  INVALID_DATE_RANGE: [
+    "Check the dates and times: the end must be after the start.",
+    "راجع التواريخ والأوقات: يجب أن تكون النهاية بعد البداية.",
+  ],
 };
 export function Failure({
   error,
@@ -507,8 +515,23 @@ export function Failure({
   const c = useTheme();
   const { text } = usePrefs();
   const code = error instanceof ApiError ? error.status : 0;
-  const reason =
-    error instanceof ApiError ? businessErrors[error.code] : undefined;
+  const details =
+    error instanceof ApiError &&
+    error.details &&
+    typeof error.details === "object"
+      ? (error.details as Record<string, unknown>)
+      : {};
+  const reason: [string, string] | undefined =
+    error instanceof ApiError &&
+    error.code === "PLAN_CLASS_LIMIT" &&
+    typeof details.planName === "string"
+      ? [
+          `“${details.planName}” reached its limit of ${Number(details.limit)} linked classes. Raise the limit in the plan or remove it from this class.`,
+          `الاشتراك «${details.planName}» وصل إلى الحد الأقصى للحصص المرتبطة (${Number(details.limit)}). ارفع الحد من إعدادات الاشتراك أو أزل الاشتراك من الحصة.`,
+        ]
+      : error instanceof ApiError
+        ? businessErrors[error.code]
+        : undefined;
   return (
     <Card style={{ borderColor: c.dangerBorder }}>
       <Text style={{ color: c.red }} accessibilityRole="alert">
@@ -528,8 +551,8 @@ export function Failure({
                   )
                 : code === 422
                   ? text(
-                      "This action is not allowed for this member right now.",
-                      "لا يمكن إتمام هذه العملية لهذا العضو حاليًا.",
+                      "This action cannot be completed. Check the entered data.",
+                      "تعذر إتمام العملية. راجع البيانات المدخلة.",
                     )
                   : code === 409
                     ? text(
