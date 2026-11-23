@@ -6,10 +6,9 @@
 # Optional: add group `google_play` with secret GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
 # to auto-increment versionCode from Play and publish to the internal track.
 #
-# iOS: provisioning profile reference `arenagym` (App Store, com.arenagym.app).
-# Upload a matching Apple Distribution certificate in Code signing identities
-# with the same reference name `arenagym`. Add an App Store Connect API key in
-# Team integrations, then set `integrations.app_store_connect` to that key name.
+# iOS: uses provisioning profile and certificate reference `arenagym`.
+# TestFlight upload is omitted until an App Store Connect API key is added
+# under Team integrations → Developer Portal.
 
 workflows:
   android-aab:
@@ -75,8 +74,6 @@ workflows:
     name: React Native iOS
     max_build_duration: 120
     instance_type: mac_mini_m2
-    integrations:
-      app_store_connect: codemagic
     environment:
       node: 24
       ios_signing:
@@ -87,7 +84,6 @@ workflows:
       vars:
         BUNDLE_ID: com.arenagym.app
         EXPO_PUBLIC_API_URL: https://test-api.arenagym-om.com
-        APP_STORE_APPLE_ID: "REPLACE_WITH_APP_STORE_APPLE_ID"
     cache:
       cache_paths:
         - $HOME/.npm
@@ -107,13 +103,7 @@ workflows:
       - name: Increment build number
         script: |
           cd "$CM_BUILD_DIR/ios"
-          LATEST_BUILD_NUMBER="$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" || true)"
-          if [ -z "${LATEST_BUILD_NUMBER:-}" ]; then
-            LATEST_BUILD_NUMBER="$BUILD_NUMBER"
-          else
-            LATEST_BUILD_NUMBER="$((LATEST_BUILD_NUMBER + 1))"
-          fi
-          agvtool new-version -all "$LATEST_BUILD_NUMBER"
+          agvtool new-version -all "$BUILD_NUMBER"
       - name: Build ipa for distribution
         script: |
           WORKSPACE="$(find "$CM_BUILD_DIR/ios" -maxdepth 1 -name "*.xcworkspace" | head -n 1)"
@@ -122,8 +112,3 @@ workflows:
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
-    publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: false
-        submit_to_app_store: false
