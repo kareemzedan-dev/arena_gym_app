@@ -108,3 +108,5 @@ Android and iOS native projects also pass `expo prebuild --no-install`; this val
 Native signing/builds need access to the existing EAS owner/project and Apple/Google credentials. This workspace is not logged into EAS and has no Android emulator or Xcode, so production signing, an IPA, physical-device acceptance and store publication have **not** been performed. A standalone Android preview APK signed with the development key has now been built and verified through GitHub Actions; download it from [docs/APK.md](docs/APK.md). Complete the device checklist in `docs/REVIEW.md` before release.
 
 Automatic WhatsApp/email/SMS delivery and payment-gateway charging remain inactive as specified by the existing backend handoff. Manual sharing opens a user-controlled destination; recording a payment is not a bank charge or refund.
+#   a r e n a _ g y m _ a p p  
+ 

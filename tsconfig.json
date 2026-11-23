@@ -4,15 +4,21 @@
     "strict": true,
     "noEmit": true,
     "paths": {
-      "@/*": ["./mobile/*"]
+      "@/*": [
+        "./mobile/*"
+      ]
     }
   },
   "include": [
     "app/**/*.tsx",
     "mobile/**/*.ts",
     "mobile/**/*.tsx",
-    "packages/contracts/src/**/*.ts",
-    "expo-env.d.ts"
+    "packages/contracts/src/**/*.ts"
   ],
-  "exclude": ["src", "App.js", "locals", "node_modules"]
+  "exclude": [
+    "src",
+    "App.js",
+    "locals",
+    "node_modules"
+  ]
 }
