@@ -1,8 +1,10 @@
 # Codemagic CI for this Expo (React Native) app.
 # https://docs.codemagic.io/yaml-quick-start/building-a-react-native-app/
 #
-# Android: upload a keystore in Team settings → codemagic.yaml settings →
-# Code signing identities, with reference name `arena_gym_keystore`.
+# Android: upload the EXISTING Play upload keystore (SHA1
+# D4:7A:92:18:B0:7B:53:4A:D9:14:0D:50:9E:DF:46:A5:C6:63:FF:AF) in Team settings
+# → Code signing identities, reference name `arena_gym_keystore`.
+# Do not generate a new keystore; Play will reject any other signing certificate.
 # Optional: add group `google_play` with secret GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
 # to auto-increment versionCode from Play and publish to the internal track.
 #
@@ -76,6 +78,7 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       node: 24
+      xcode: latest
       ios_signing:
         provisioning_profiles:
           - arenagym
@@ -83,6 +86,8 @@ workflows:
           - arenagym
       vars:
         BUNDLE_ID: com.arenagym.app
+        XCODE_WORKSPACE: ArenaGym.xcworkspace
+        XCODE_SCHEME: ArenaGym
         EXPO_PUBLIC_API_URL: https://test-api.arenagym-om.com
     cache:
       cache_paths:
@@ -99,16 +104,22 @@ workflows:
         script: |
           cd ios && pod install
       - name: Set up provisioning profiles
-        script: xcode-project use-profiles
+        script: |
+          xcode-project use-profiles --project "$CM_BUILD_DIR/ios/ArenaGym.xcodeproj"
+          echo "Code signing identities:"
+          security find-identity -v -p codesigning
       - name: Increment build number
         script: |
           cd "$CM_BUILD_DIR/ios"
           agvtool new-version -all "$BUILD_NUMBER"
       - name: Build ipa for distribution
         script: |
-          WORKSPACE="$(find "$CM_BUILD_DIR/ios" -maxdepth 1 -name "*.xcworkspace" | head -n 1)"
-          SCHEME="$(xcodebuild -list -workspace "$WORKSPACE" | awk '/Schemes/{getline; gsub(/^ +/,""); print; exit}')"
-          xcode-project build-ipa --workspace "$WORKSPACE" --scheme "$SCHEME"
+          set -euo pipefail
+          xcodebuild -list -workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE"
+          xcode-project build-ipa \
+            --workspace "$CM_BUILD_DIR/ios/$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME" \
+            --disable-xcpretty
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log

@@ -14,12 +14,14 @@ if (!text.includes("CM_KEYSTORE_PATH")) {
   const withRelease = `            keyPassword 'android'
         }
         release {
-            if (System.getenv()["CI"]) {
-                storeFile file(System.getenv()["CM_KEYSTORE_PATH"])
-                storePassword System.getenv()["CM_KEYSTORE_PASSWORD"]
-                keyAlias System.getenv()["CM_KEY_ALIAS"]
-                keyPassword System.getenv()["CM_KEY_PASSWORD"]
+            def keystorePath = System.getenv()["CM_KEYSTORE_PATH"]
+            if (!keystorePath) {
+                throw new GradleException("CI release builds require CM_KEYSTORE_PATH (Codemagic android_signing).")
             }
+            storeFile file(keystorePath)
+            storePassword System.getenv()["CM_KEYSTORE_PASSWORD"]
+            keyAlias System.getenv()["CM_KEY_ALIAS"]
+            keyPassword System.getenv()["CM_KEY_PASSWORD"]
         }
     }`;
   if (!text.includes(debugClose)) {
