@@ -1,0 +1,125 @@
+# Codemagic CI for this Expo (React Native) app.
+# https://docs.codemagic.io/yaml-quick-start/building-a-react-native-app/
+#
+# Android: upload a keystore in Team settings → codemagic.yaml settings →
+# Code signing identities, with reference name `arena_gym_keystore`.
+# Optional: add group `google_play` with secret GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+# to auto-increment versionCode from Play and publish to the internal track.
+#
+# iOS: add an App Store Connect API key in Team integrations, then set
+# `integrations.app_store_connect` to that key name.
+
+workflows:
+  android-aab:
+    name: Android AAB
+    max_build_duration: 120
+    instance_type: linux_x2
+    environment:
+      java: 17
+      node: 24
+      android_signing:
+        - arena_gym_keystore
+      vars:
+        PACKAGE_NAME: com.arenagym.app
+        EXPO_PUBLIC_API_URL: https://test-api.arenagym-om.com
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/.gradle/caches
+    scripts:
+      - name: Install npm dependencies
+        script: |
+          npm ci
+      - name: Typecheck and unit tests
+        script: |
+          npm run check
+      - name: Generate native Android project
+        script: |
+          npx expo prebuild --platform android --no-install
+      - name: Set Android SDK location
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Configure release signing
+        script: |
+          node scripts/codemagic-patch-android-gradle.mjs
+      - name: Build Android App Bundle
+        script: |
+          set -euo pipefail
+          UPDATED_BUILD_NUMBER="${BUILD_NUMBER}"
+          if [ -n "${GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS:-}" ]; then
+            LATEST_GOOGLE_PLAY_BUILD_NUMBER="$(google-play get-latest-build-number --package-name "$PACKAGE_NAME" || true)"
+            if [ -n "${LATEST_GOOGLE_PLAY_BUILD_NUMBER:-}" ]; then
+              UPDATED_BUILD_NUMBER="$((LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))"
+            fi
+          fi
+          echo "Using versionCode ${UPDATED_BUILD_NUMBER}"
+          export NODE_ENV=production
+          cd android
+          ./gradlew :app:bundleRelease --no-daemon --max-workers=2 \
+            -PcmVersionCode="$UPDATED_BUILD_NUMBER" \
+            -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+    # Uncomment after adding Codemagic group `google_play` with
+    # GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS, and add `groups: [google_play]`
+    # under environment.
+    # publishing:
+    #   google_play:
+    #     credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+    #     track: internal
+    #     submit_as_draft: true
+
+  react-native-ios:
+    name: React Native iOS
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: codemagic
+    environment:
+      node: 24
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.arenagym.app
+      vars:
+        BUNDLE_ID: com.arenagym.app
+        EXPO_PUBLIC_API_URL: https://test-api.arenagym-om.com
+        APP_STORE_APPLE_ID: "REPLACE_WITH_APP_STORE_APPLE_ID"
+    cache:
+      cache_paths:
+        - $HOME/.npm
+        - $HOME/Library/Caches/CocoaPods
+    scripts:
+      - name: Install npm dependencies
+        script: |
+          npm ci
+      - name: Generate native iOS project
+        script: |
+          npx expo prebuild --platform ios --no-install
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios && pod install
+      - name: Set up provisioning profiles
+        script: xcode-project use-profiles
+      - name: Increment build number
+        script: |
+          cd "$CM_BUILD_DIR/ios"
+          LATEST_BUILD_NUMBER="$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" || true)"
+          if [ -z "${LATEST_BUILD_NUMBER:-}" ]; then
+            LATEST_BUILD_NUMBER="$BUILD_NUMBER"
+          else
+            LATEST_BUILD_NUMBER="$((LATEST_BUILD_NUMBER + 1))"
+          fi
+          agvtool new-version -all "$LATEST_BUILD_NUMBER"
+      - name: Build ipa for distribution
+        script: |
+          WORKSPACE="$(find "$CM_BUILD_DIR/ios" -maxdepth 1 -name "*.xcworkspace" | head -n 1)"
+          SCHEME="$(xcodebuild -list -workspace "$WORKSPACE" | awk '/Schemes/{getline; gsub(/^ +/,""); print; exit}')"
+          xcode-project build-ipa --workspace "$WORKSPACE" --scheme "$SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: false
+        submit_to_app_store: false
