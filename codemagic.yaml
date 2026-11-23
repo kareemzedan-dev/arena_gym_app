@@ -6,8 +6,10 @@
 # Optional: add group `google_play` with secret GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
 # to auto-increment versionCode from Play and publish to the internal track.
 #
-# iOS: add an App Store Connect API key in Team integrations, then set
-# `integrations.app_store_connect` to that key name.
+# iOS: provisioning profile reference `arenagym` (App Store, com.arenagym.app).
+# Upload a matching Apple Distribution certificate in Code signing identities
+# with the same reference name `arenagym`. Add an App Store Connect API key in
+# Team integrations, then set `integrations.app_store_connect` to that key name.
 
 workflows:
   android-aab:
@@ -78,8 +80,10 @@ workflows:
     environment:
       node: 24
       ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.arenagym.app
+        provisioning_profiles:
+          - arenagym
+        certificates:
+          - arenagym
       vars:
         BUNDLE_ID: com.arenagym.app
         EXPO_PUBLIC_API_URL: https://test-api.arenagym-om.com
